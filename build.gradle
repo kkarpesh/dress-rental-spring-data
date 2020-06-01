@@ -1,5 +1,7 @@
 plugins {
+  id 'org.springframework.boot' version '2.3.0.RELEASE'
   id "com.github.spotbugs" version "4.0.8"
+  id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
 
 allprojects {
@@ -12,12 +14,21 @@ subprojects {
     apply plugin: 'checkstyle'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'jacoco'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
 
     repositories {
         mavenCentral()
     }
 
     sourceCompatibility = '11'
+
+    dependencyManagement {
+        imports {
+          mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.0.RELEASE")
+        }
+      }
+
 
     test {
        useJUnitPlatform()
@@ -28,7 +39,7 @@ subprojects {
     checkstyle {
         toolVersion = '8.2'
         showViolations = true
-        ignoreFailures = false
+        ignoreFailures = true
         checkstyleTest.enabled = false
     }
 

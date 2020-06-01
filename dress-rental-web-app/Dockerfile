@@ -1,6 +1,6 @@
-FROM tomcat:9.0.35-jdk11-openjdk
-ENV spring.profiles.active=docker
-ADD build/libs/dress-rental-web.war /usr/local/tomcat/webapps/
+FROM adoptopenjdk/openjdk11:alpine-jre
 EXPOSE 8888
-CMD ["catalina.sh", "run"]
+ARG JAR_FILE=build/libs/dress-rental-web-app.jar
+COPY ${JAR_FILE} web-app.jar
+ENTRYPOINT ["java","-jar","/web-app.jar", "--host=rest"]
 

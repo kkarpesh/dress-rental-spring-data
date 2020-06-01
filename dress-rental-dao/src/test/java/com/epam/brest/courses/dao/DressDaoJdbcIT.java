@@ -1,5 +1,6 @@
 package com.epam.brest.courses.dao;
 
+import com.epam.brest.courses.dao.config.DaoTestConfig;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.Rent;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -19,7 +20,7 @@ import static com.epam.brest.courses.constants.RentConstants.*;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml", "classpath*:dao.xml"})
+@ContextConfiguration(classes = DaoTestConfig.class)
 class DressDaoJdbcIT {
 
     private final DressDao dressDao;

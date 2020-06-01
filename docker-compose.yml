@@ -7,7 +7,7 @@ services:
       context: ./dress-rental-web-app
       dockerfile: Dockerfile
     ports:
-      - 8888:8080
+      - 8888:8888
     depends_on:
       - rest
 
@@ -18,4 +18,4 @@ services:
       context: ./dress-rental-rest-app
       dockerfile: Dockerfile
     ports:
-      - 8088:8080
+      - 8088:8088

@@ -4,19 +4,21 @@ import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
 import com.epam.brest.courses.service_api.dto.DressDtoService;
+import com.epam.brest.courses.web_app.controller.DressController;
+import com.epam.brest.courses.web_app.validators.DressValidator;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,26 +32,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = "classpath:app-context-test.xml")
+@WebMvcTest(DressController.class)
 class DressControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
+
     private static final String DRESSES_ENDPOINT = "/dresses";
 
-    @Autowired
-    private WebApplicationContext wac;
-
-    @Autowired
+    @MockBean
     private DressService dressService;
 
-    @Autowired
+    @MockBean
     private DressDtoService dressDtoService;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    @Autowired
+    private ApplicationContext applicationContext;
 
+    @TestConfiguration
+    static class AdditionalConfig {
+        @Bean
+        public DressValidator dressValidator() {
+            return new DressValidator();
+        }
     }
 
     @Test

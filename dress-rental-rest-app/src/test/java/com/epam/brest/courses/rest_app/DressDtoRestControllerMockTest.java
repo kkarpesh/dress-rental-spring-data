@@ -1,6 +1,7 @@
 package com.epam.brest.courses.rest_app;
 
 import com.epam.brest.courses.model.dto.DressDto;
+import com.epam.brest.courses.rest_app.controller.DressDtoRestController;
 import com.epam.brest.courses.service_api.dto.DressDtoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

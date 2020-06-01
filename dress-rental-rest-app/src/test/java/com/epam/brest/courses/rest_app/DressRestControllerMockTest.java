@@ -1,6 +1,7 @@
 package com.epam.brest.courses.rest_app;
 
 import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.rest_app.controller.DressRestController;
 import com.epam.brest.courses.rest_app.exception_handler.ExceptionRestControllerAdviser;
 import com.epam.brest.courses.service_api.DressService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,7 @@
 package com.epam.brest.courses.rest_app;
 
 import com.epam.brest.courses.model.dto.RentDto;
+import com.epam.brest.courses.rest_app.controller.RentDtoRestController;
 import com.epam.brest.courses.rest_app.exception_handler.ExceptionRestControllerAdviser;
 import com.epam.brest.courses.service_api.dto.RentDtoService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,19 +1,17 @@
 dependencies {
     implementation project(':dress-rental-model')
     implementation project(':dress-rental-test-db')
-    implementation 'org.springframework:spring-context:5.2.5.RELEASE'
-    implementation 'org.springframework:spring-jdbc:5.2.5.RELEASE'
-    implementation 'ch.qos.logback:logback-core:1.2.3'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.springframework:spring-test:5.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.apache.commons:commons-lang3:3.9'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.2.0'
-    testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.1.0'
 }
 
+bootJar {
+  enabled = false
+}
+
+jar {
+  enabled = true
+}
 description = 'Dress Rental DAO'

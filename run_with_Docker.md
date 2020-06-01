@@ -8,7 +8,7 @@ install docker-compose
 ## Installing
 Select the directory for the project and clone the project from github:
 ```
-$ git clone https://github.com/Brest-Java-Course-2020/kkarpesh-dress-rental.git
+$ git clone https://github.com/kkarpesh/dress-rental.git
 ```
 
 ## Build project

@@ -1,4 +1,4 @@
 /**
- * Spring MVC controllers that handle users' requests to the application.
+ * Root of Web App.
  */
 package com.epam.brest.courses.web_app;

@@ -1,6 +1,7 @@
-FROM tomcat:9.0.35-jdk11-openjdk
-ADD build/libs/dress-rental-rest.war /usr/local/tomcat/webapps/
+FROM adoptopenjdk/openjdk11:alpine-jre
 EXPOSE 8088
-CMD ["catalina.sh", "run"]
+ARG JAR_FILE=build/libs/dress-rental-rest-app.jar
+COPY ${JAR_FILE} rest-app.jar
+ENTRYPOINT ["java","-jar","/rest-app.jar"]
 
 

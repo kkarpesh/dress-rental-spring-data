@@ -1,45 +1,44 @@
 package com.epam.brest.courses.web_app.exception_handler;
 
 import com.epam.brest.courses.service_api.DressService;
+import com.epam.brest.courses.web_app.controller.DressController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = "classpath:app-context-test.xml")
+@ExtendWith(MockitoExtension.class)
 class ExceptionControllerAdviserTest {
 
     private MockMvc mockMvc;
     private static final String DRESSES_ENDPOINT = "/dresses";
 
-    @Autowired
-    private WebApplicationContext wac;
-
-    @Autowired
+    @Mock
     private DressService dressService;
+
+    @InjectMocks
+    private DressController dressController;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(dressController)
+                .setControllerAdvice(new ExceptionControllerAdviser())
+                .build();
 
     }
 
@@ -54,7 +53,6 @@ class ExceptionControllerAdviserTest {
 
         mockMvc.perform(get(DRESSES_ENDPOINT + "/" + 1)).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("message"));
 
@@ -66,7 +64,6 @@ class ExceptionControllerAdviserTest {
 
         mockMvc.perform(get(DRESSES_ENDPOINT + "/" + 1)).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("message"));
 
@@ -78,7 +75,6 @@ class ExceptionControllerAdviserTest {
 
         mockMvc.perform(get(DRESSES_ENDPOINT + "/" + 1)).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("message"));
 

@@ -1,43 +1,19 @@
-plugins {
-    id 'war'
-    id 'org.gretty' version '3.0.3'
-}
-
-repositories {
-    jcenter()
-}
-
-gretty {
-    httpPort = 8088
-    contextPath = '/'
-
-}
-
-war {
-    archiveName = 'dress-rental-rest.war'
-}
-
 dependencies {
     implementation project(':dress-rental-model')
     implementation project(':dress-rental-test-db')
     implementation project(':dress-rental-dao')
     implementation project(':dress-rental-service-api')
     implementation project(':dress-rental-service')
-    implementation 'org.springframework:spring-context:5.2.5.RELEASE'
-    implementation 'org.springframework:spring-web:5.2.5.RELEASE'
-    implementation 'org.springframework:spring-webmvc:5.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework:spring-tx:5.2.5.RELEASE'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'ch.qos.logback:logback-core:1.2.3'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.springframework:spring-test:5.2.5.RELEASE'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
-    testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.1.0'
-    testImplementation 'org.hamcrest:hamcrest-all:1.3'
-    providedCompile 'javax.servlet:javax.servlet-api:4.0.0'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    	}
+}
+
+bootJar {
+   archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
 }
 
 description = 'Dress Rental REST-APP'
