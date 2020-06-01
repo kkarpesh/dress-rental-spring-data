@@ -1,13 +1,12 @@
-![Java CI with Maven](https://github.com/Brest-Java-Course-2020/kkarpesh-dress-rental/workflows/Java%20CI%20with%20Maven/badge.svg)
-![Java CI with Gradle](https://github.com/Brest-Java-Course-2020/kkarpesh-dress-rental/workflows/Java%20CI%20with%20Gradle/badge.svg)
+![Java CI with Gradle](https://github.com/kkarpesh/dress-rental/workflows/Java%20CI%20with%20Gradle/badge.svg)
 # kkarpesh-dress-rental
 Dress rental demo application.
 + [Environment setting](#Environment-setting)
 + [Installing](#Installing)
 + [Build project](#Build-project)
 + [Preparing reports](#Preparing-reports)
-+ [Deploy application on Tomcat server](#Deploy-application-on-Tomcat-server)
-+ [Run application on Jetty test server](#Run-application-on-Jetty-test-server)
++ [Run application with Gradle](#Run-application-with-Gradle)
++ [Run applications with java -jar command](#Run-applications-with-java--jar-command)
     + [Available REST endpoints](#Available-REST-endpoints)
         + [dresses](#dresses)
         + [dress_dtos](#dress_dtos)
@@ -72,7 +71,7 @@ Rest-app at:
 ```
 http://localhost:8088
 ```
-for shutdown jetty server in terminal window press "CTRL+C"
+for shutdown apps in terminal window press "CTRL+C"
 ## Available REST endpoints
 Then applications run on Jetty test server, the following endpoints are available:
 ### dresses
