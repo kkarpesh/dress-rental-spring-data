@@ -1,5 +1,8 @@
 package com.epam.brest.courses.model;
 
+import javax.persistence.*;
+import java.util.Set;
+
 /**
  * Represents a dress model from the database.
  *
@@ -7,17 +10,35 @@ package com.epam.brest.courses.model;
  * @version 1.0
  * @since 1.0
  */
+@Entity
+@Table(name = "DRESS")
 public class Dress {
 
     /**
      * The dress ID.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dress_id")
     private Integer dressId;
 
     /**
      * The dress name.
      */
+    @Column(name = "dress_name")
     private String dressName;
+
+    /**
+     * The rents.
+     */
+    @OneToMany(mappedBy = "dress", fetch = FetchType.LAZY)
+    private Set<Rent> rents;
+
+    /**
+     * Constructor without params.
+     */
+    public Dress(){
+    }
 
     /**
      * Gets the dress ID.
@@ -53,6 +74,22 @@ public class Dress {
      */
     public void setDressName(String dressName) {
         this.dressName = dressName;
+    }
+
+    /**
+     * Gets the rents.
+     * @return the rents.
+     */
+    public Set<Rent> getRents() {
+        return rents;
+    }
+
+    /**
+     * Sets the rents.
+     * @param rents a set of rents.
+     */
+    public void setRents(Set<Rent> rents) {
+        this.rents = rents;
     }
 
     /**

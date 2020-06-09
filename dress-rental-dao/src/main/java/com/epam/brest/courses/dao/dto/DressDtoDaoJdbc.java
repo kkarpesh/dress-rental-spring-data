@@ -1,6 +1,5 @@
 package com.epam.brest.courses.dao.dto;
 
-import com.epam.brest.courses.dao.DressDaoJdbc;
 import com.epam.brest.courses.model.dto.DressDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class DressDtoDaoJdbc implements DressDtoDao {
      * Default logger for current class.
      */
     private static final Logger LOGGER
-            = LoggerFactory.getLogger(DressDaoJdbc.class);
+            = LoggerFactory.getLogger(DressDtoDaoJdbc.class);
 
     /**
      * The database query to find all dresses

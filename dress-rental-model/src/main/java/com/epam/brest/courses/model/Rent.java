@@ -3,6 +3,7 @@ package com.epam.brest.courses.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 /**
@@ -12,16 +13,22 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 1.0
  */
+@Entity
+@Table(name = "RENT")
 public class Rent {
 
     /**
      * The rent ID.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rent_id")
     private Integer rentId;
 
     /**
      * The client.
      */
+    @Column(name = "client")
     private String client;
 
     /**
@@ -29,12 +36,21 @@ public class Rent {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "rent_date")
     private LocalDate rentDate;
 
     /**
-     * The dress ID.
+     * The dress.
      */
-    private Integer dressId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "dress_id", nullable = false)
+    private Dress dress;
+
+    /**
+     * Construcor without params.
+     */
+    public Rent(){
+    }
 
     /**
      * Gets the rent ID.
@@ -91,21 +107,21 @@ public class Rent {
     }
 
     /**
-     * Gets the dress ID.
+     * Gets the dress.
      *
-     * @return the dress ID.
+     * @return the dress.
      */
-    public Integer getDressId() {
-        return dressId;
+    public Dress getDress() {
+        return dress;
     }
 
     /**
-     * Sets the dress ID.
+     * Sets the dress.
      *
-     * @param dressId A Integer containing the dress ID.
+     * @param dress a dress..
      */
-    public void setDressId(Integer dressId) {
-        this.dressId = dressId;
+    public void setDress(Dress dress) {
+        this.dress = dress;
     }
 
     /**
@@ -119,6 +135,6 @@ public class Rent {
                 + "rentId=" + rentId
                 + ", client='" + client + '\''
                 + ", rentDate=" + rentDate
-                + ", dressId=" + dressId + '}';
+                + ", dress=" + dress+ '}';
     }
 }
