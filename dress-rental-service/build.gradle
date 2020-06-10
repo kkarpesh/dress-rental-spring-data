@@ -7,10 +7,11 @@ dependencies {
     implementation project(':dress-rental-dao')
     implementation project(':dress-rental-test-db')
     implementation project(':dress-rental-service-api')
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework:spring-tx:5.2.5.RELEASE'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.apache.commons:commons-lang3:3.9'
 }
 
 bootJar {

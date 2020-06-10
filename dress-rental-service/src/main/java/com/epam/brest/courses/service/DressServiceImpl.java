@@ -1,10 +1,11 @@
 package com.epam.brest.courses.service;
 
-import com.epam.brest.courses.dao.DressDao;
+import com.epam.brest.courses.dao.DressRepository;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.service_api.DressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,15 +33,16 @@ public class DressServiceImpl implements DressService {
     /**
      * A dress data access object.
      */
-    private final DressDao dressDao;
+    private final DressRepository dressRepository;
 
     /**
      * Constructs new object with given DAO object.
      *
-     * @param dressDao dress DAO.
+     * @param dressRepository dress repository.
      */
-    public DressServiceImpl(DressDao dressDao) {
-        this.dressDao = dressDao;
+    @Autowired
+    public DressServiceImpl(DressRepository dressRepository) {
+        this.dressRepository = dressRepository;
     }
 
     /**
@@ -52,7 +54,7 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public List<Dress> findAll() {
         LOGGER.debug("Find all dresses");
-        return dressDao.findAll();
+        return dressRepository.findAll();
     }
 
     /**
@@ -65,7 +67,7 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public Optional<Dress> findById(Integer dressId) {
         LOGGER.debug("Find dress with id = {}", dressId);
-        return dressDao.findById(dressId);
+        return dressRepository.findById(dressId);
     }
 
     /**
@@ -77,7 +79,16 @@ public class DressServiceImpl implements DressService {
     @Override
     public Integer create(Dress dress) {
         LOGGER.debug("Create new dress {}", dress);
-        return dressDao.create(dress);
+        Optional<Dress> optionalDress =
+                dressRepository.findByDressName(dress.getDressName());
+
+        if (optionalDress.isEmpty()) {
+            Dress savedDress = dressRepository.save(dress);
+            return savedDress.getDressId();
+        } else {
+            throw new IllegalArgumentException("Dress with the same name " +
+                    "is already exist in DB");
+        }
     }
 
     /**
@@ -89,7 +100,7 @@ public class DressServiceImpl implements DressService {
     @Override
     public Integer update(Dress dress) {
         LOGGER.debug("Update dress {}", dress);
-        return dressDao.update(dress);
+        return 0;
     }
 
     /**
@@ -101,7 +112,17 @@ public class DressServiceImpl implements DressService {
     @Override
     public Integer delete(Integer dressId) {
         LOGGER.debug("Delete dress by id = {}", dressId);
-        return dressDao.delete(dressId);
+        Optional<Dress> dress = dressRepository.findById(dressId);
+        if (dress.isEmpty()){
+           throw new IllegalArgumentException("Dress not exist");
+        }
+        if (dress.get().getRents().size()>0){
+            throw new UnsupportedOperationException("This dress has orders" +
+                    " and cannot be removed.");
+        } else {
+            dressRepository.deleteById(dressId);
+            return 1;
+        }
     }
 
     /**
@@ -114,7 +135,8 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public Boolean isNameAlreadyExist(Dress dress) {
         LOGGER.debug("is name exists - {}", dress);
-        return dressDao.isNameAlreadyExist(dress);
+        Optional<Dress> foundDress = dressRepository.findByDressName(dress.getDressName());
+        return foundDress.isPresent();
     }
 
     /**
@@ -127,6 +149,11 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public Boolean isDressHasRents(Integer dressId) {
         LOGGER.debug("is dress id={} has rents", dressId);
-        return dressDao.isDressHasRents(dressId);
+        Optional<Dress> foundDress = dressRepository.findById(dressId);
+        if (foundDress.isEmpty()){
+            throw new IllegalArgumentException("Dress is not exist.");
+        } else {
+            return foundDress.get().getRents().size() > 0;
+        }
     }
 }
