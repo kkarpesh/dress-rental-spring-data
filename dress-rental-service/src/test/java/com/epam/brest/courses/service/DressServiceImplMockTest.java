@@ -1,7 +1,9 @@
 package com.epam.brest.courses.service;
 
-import com.epam.brest.courses.dao.DressDao;
+import com.epam.brest.courses.dao.DressRepository;
 import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.DressDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,20 +22,24 @@ import static org.mockito.Mockito.*;
 class DressServiceImplMockTest {
 
     @Mock
-    private DressDao dressDao;
+    private DressRepository dressRepository;
 
     @InjectMocks
     private DressServiceImpl dressService;
 
     @Test
     void shouldFindAllDress() {
-        when(dressDao.findAll()).thenReturn(Collections.singletonList(new Dress()));
+        Dress dress = new Dress();
+        dress.setDressId(1);
+        dress.setDressName("Dress");
+        dress.setRents(Collections.EMPTY_SET);
+        when(dressRepository.findAll()).thenReturn(Collections.singletonList(dress));
 
-        List<Dress> dresses = dressService.findAll();
+        List<DressDto> dresses = dressService.findAllWithNumberOfOrders();
         assertNotNull(dresses);
         assertTrue(dresses.size() > 0);
 
-        verify(dressDao, times(1)).findAll();
+        verify(dressRepository, times(1)).findAll();
     }
 
     @Test
@@ -42,129 +49,162 @@ class DressServiceImplMockTest {
         Dress dress = new Dress();
         dress.setDressId(dressId);
         dress.setDressName(dressName);
+        dress.setRents(Collections.EMPTY_SET);
 
-        when(dressDao.findById(anyInt())).thenReturn(Optional.of(dress));
+        when(dressRepository.findById(anyInt())).thenReturn(Optional.of(dress));
 
-        Optional<Dress> optionalDress = dressService.findById(dressId);
+        Optional<DressDto> optionalDress = dressService.findById(dressId);
         assertTrue(optionalDress.isPresent());
-        assertSame(dress, optionalDress.get());
+        assertEquals(dress.getDressId(), optionalDress.get().getDressId());
+        assertEquals(dress.getDressName(), optionalDress.get().getDressName());
 
-        verify(dressDao, times(1)).findById(dressId);
+        verify(dressRepository, times(1)).findById(dressId);
     }
 
     @Test
     void shouldReturnNullWhenFindByNonexistentId() {
-        when(dressDao.findById(anyInt())).thenReturn(Optional.empty());
+        when(dressRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        Optional<Dress> optionalDress = dressService.findById(anyInt());
+        Optional<DressDto> optionalDress = dressService.findById(anyInt());
         assertTrue(optionalDress.isEmpty());
 
-        verify(dressDao, times(1)).findById(anyInt());
+        verify(dressRepository, times(1)).findById(anyInt());
     }
 
     @Test
     void shouldCreateNewDress() {
-        Integer dressId = 1;
-        when(dressDao.create(any())).thenReturn(dressId);
+        Dress dress = new Dress();
+        dress.setDressName("Dress");
+        dress.setDressId(1);
+        when((dressRepository.findByDressName("Dress"))).thenReturn(Optional.empty());
+        when(dressRepository.save(any())).thenReturn(dress);
 
-        Integer id = dressService.create(any());
+        DressDto dressDto = new DressDto();
+        dressDto.setDressId(dress.getDressId());
+        dressDto.setDressName(dress.getDressName());
+        Integer dressId = dressService.createOrUpdate(dressDto);
 
-        assertNotNull(id);
-        assertEquals(dressId, id);
+        assertNotNull(dressId);
+        assertEquals(dressId, 1);
 
-        verify(dressDao, times(1)).create(any());
+        verify(dressRepository, times(1)).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenCreateNewDressWithExistingName() {
-        when(dressDao.create(any())).thenThrow(IllegalArgumentException.class);
+        Dress dress = new Dress();
+        dress.setDressName("Dress");
+        when((dressRepository.findByDressName("Dress"))).thenReturn(Optional.of(dress));
+        DressDto dressDto = new DressDto();
+        dressDto.setDressId(dress.getDressId());
+        dressDto.setDressName(dress.getDressName());
 
         assertThrows(IllegalArgumentException.class, () -> {
-            dressService.create(any());
+            dressService.createOrUpdate(dressDto);
         });
 
-        verify(dressDao, times(1)).create(any());
-    }
-
-    @Test
-    void shouldUpdatedDress() {
-        when(dressDao.update(any())).thenReturn(1);
-
-        Integer result = dressService.update(any());
-
-        assertNotNull(result);
-        assertEquals(1, (int) result);
-
-        verify(dressDao, times(1)).update(any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenUpdateDressWithExistingName() {
-        when(dressDao.update(any())).thenThrow(IllegalArgumentException.class);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            dressService.update(any());
-        });
-
-        verify(dressDao, times(1)).update(any());
+        verify(dressRepository, times(1)).findByDressName("Dress");
     }
 
     @Test
     void shouldDeleteDressThatDoesNotHaveRents() {
-        when(dressDao.delete(anyInt())).thenReturn(1);
+        Dress dress = new Dress();
+        dress.setDressId(1);
+        dress.setDressName("Dress");
+        dress.setRents(Collections.EMPTY_SET);
+        when(dressRepository.findById(1)).thenReturn(Optional.of(dress));
+        doNothing().when(dressRepository).deleteById(1);
 
-        Integer result = dressService.delete(anyInt());
+        Integer result = dressService.delete(1);
 
         assertNotNull(result);
         assertEquals(1, (int) result);
 
-        verify(dressDao, times(1)).delete(anyInt());
+        verify(dressRepository, times(1)).deleteById(anyInt());
     }
 
     @Test
     void shouldThrowExceptionWhenDeleteDressWithRents() {
-        when(dressDao.delete(anyInt())).thenThrow(UnsupportedOperationException.class);
+        Dress dress = new Dress();
+        dress.setRents(Set.of(new Rent()));
+        when(dressRepository.findById(1)).thenReturn(Optional.of(dress));
 
         assertThrows(UnsupportedOperationException.class, () -> {
-            dressService.delete(anyInt());
+            dressService.delete(1);
         });
 
-        verify(dressDao, times(1)).delete(anyInt());
+        verify(dressRepository, times(1)).findById(1);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDeleteNonExistedDress() {
+        when(dressRepository.findById(1)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            dressService.delete(1);
+        });
+
+        verify(dressRepository, times(1)).findById(1);
     }
 
     @Test
     void isNameAlreadyExistReturnTrue() {
-        when(dressDao.isNameAlreadyExist(any())).thenReturn(true);
+        Dress dress = new Dress();
+        dress.setDressId(1);
+        dress.setDressName("Dress");
 
-        assertTrue(dressService.isNameAlreadyExist(any()));
+        DressDto dressDto = new DressDto();
+        dressDto.setDressId(dress.getDressId());
+        dressDto.setDressName(dress.getDressName());
+        when(dressRepository.findByDressName("Dress")).thenReturn(Optional.of(dress));
 
-        verify(dressDao, times(1)).isNameAlreadyExist(any());
+        assertTrue(dressService.isNameAlreadyExist(dressDto));
+
+        verify(dressRepository, times(1)).findByDressName(any());
     }
 
     @Test
     void isNameAlreadyExistReturnFalse() {
-        when(dressDao.isNameAlreadyExist(any())).thenReturn(false);
+        DressDto dressDto = new DressDto();
+        dressDto.setDressId(1);
+        dressDto.setDressName("Dress");
+        when(dressRepository.findByDressName("Dress")).thenReturn(Optional.empty());
 
-        assertFalse(dressService.isNameAlreadyExist(any()));
+        assertFalse(dressService.isNameAlreadyExist(dressDto));
 
-        verify(dressDao, times(1)).isNameAlreadyExist(any());
+        verify(dressRepository, times(1)).findByDressName(any());
     }
 
     @Test
     void isDressHasRentsReturnTrue() {
-        when(dressDao.isDressHasRents(anyInt())).thenReturn(true);
+        Dress dress = new Dress();
+        dress.setRents(Set.of(new Rent()));
+        when(dressRepository.findById(anyInt())).thenReturn(Optional.of(dress));
 
         assertTrue(dressService.isDressHasRents(anyInt()));
 
-        verify(dressDao, times(1)).isDressHasRents(anyInt());
+        verify(dressRepository, times(1)).findById(anyInt());
     }
 
     @Test
     void isDressHasRentsReturnFalse() {
-        when(dressDao.isDressHasRents(anyInt())).thenReturn(false);
+        Dress dress = new Dress();
+        dress.setRents(Collections.EMPTY_SET);
+        when(dressRepository.findById(anyInt())).thenReturn(Optional.of(dress));
 
         assertFalse(dressService.isDressHasRents(anyInt()));
 
-        verify(dressDao, times(1)).isDressHasRents(anyInt());
+        verify(dressRepository, times(1)).findById(anyInt());
+    }
+
+    @Test
+    void shouldThrowExceptionIsDressHasRentsReturnFalse() {
+        when(dressRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            dressService.isDressHasRents(1);
+        });
+
+        verify(dressRepository, times(1)).findById(anyInt());
     }
 }

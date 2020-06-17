@@ -1,11 +1,9 @@
 package com.epam.brest.courses.web_app.controller;
 
-import com.epam.brest.courses.model.Dress;
-import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.DressService;
 import com.epam.brest.courses.service_api.RentService;
-import com.epam.brest.courses.service_api.dto.RentDtoService;
 import com.epam.brest.courses.web_app.validators.RentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +37,6 @@ public class RentController {
      */
     private final RentService rentService;
 
-    /**
-     * Service layer object to get information of rentDto.
-     */
-    private final RentDtoService rentDtoService;
 
     /**
      * Service layer object to get information of dress.
@@ -59,14 +53,11 @@ public class RentController {
      * Constructs new object.
      *
      * @param rentService    rentService object.
-     * @param rentDtoService dressDtoService object.
      * @param dressService   dressService object.
      */
     public RentController(RentService rentService,
-                          RentDtoService rentDtoService,
                           DressService dressService) {
         this.rentService = rentService;
-        this.rentDtoService = rentDtoService;
         this.dressService = dressService;
     }
 
@@ -93,7 +84,7 @@ public class RentController {
             dateTo = null;
         }
         List<RentDto> rents =
-                rentDtoService.findAllWIthDressNameByDate(dateFrom, dateTo);
+                rentService.findAllByDate(dateFrom, dateTo);
 
         model.addAttribute("rents", rents);
         model.addAttribute("dateFrom", dateFrom);
@@ -111,8 +102,8 @@ public class RentController {
     public final String gotoAddRentPage(Model model) {
         LOGGER.debug("Goto add rent page {}", model);
         model.addAttribute("isNew", true);
-        model.addAttribute("rent", new Rent());
-        List<Dress> dresses = dressService.findAll();
+        model.addAttribute("rentDto", new RentDto());
+        List<DressDto> dresses = dressService.findAllWithNumberOfOrders();
         model.addAttribute("dresses", dresses);
         return "rent";
     }
@@ -127,10 +118,10 @@ public class RentController {
     @GetMapping("/{id}")
     public final String gotoEditDressPage(@PathVariable Integer id,
                                           Model model) {
-        Optional<Rent> rent = rentService.findById(id);
+        Optional<RentDto> rent = rentService.findById(id);
         if (rent.isPresent()) {
-            model.addAttribute("rent", rent.get());
-            List<Dress> dresses = dressService.findAll();
+            model.addAttribute("rentDto", rent.get());
+            List<DressDto> dresses = dressService.findAllWithNumberOfOrders();
             model.addAttribute("dresses", dresses);
             return "rent";
         } else {
@@ -141,33 +132,33 @@ public class RentController {
     /**
      * Update or create new rent.
      *
-     * @param rent   rent.
+     * @param rentDto rentDto.
      * @param result binding result
      * @param model  to storage information for view rendering.
      * @return view name.
      */
     @PostMapping
-    public final String createOrUpdate(@Valid Rent rent,
+    public final String createOrUpdate(@Valid RentDto rentDto,
                                        BindingResult result,
                                        Model model) {
-        rentValidator.validate(rent, result);
-        List<Dress> dresses = dressService.findAll();
+        rentValidator.validate(rentDto, result);
+        List<DressDto> dresses = dressService.findAllWithNumberOfOrders();
         model.addAttribute("dresses", dresses);
-        if (rent.getRentId() == null) {
-            LOGGER.debug("Create new rent {}, {}", rent, result);
+        if (rentDto.getRentId() == null) {
+            LOGGER.debug("Create new rent {}, {}", rentDto, result);
             if (result.hasErrors()) {
                 model.addAttribute("isNew", true);
                 return "rent";
             } else {
-                rentService.create(rent);
+                rentService.createOrUpdate(rentDto);
                 return "redirect:/rents";
             }
         } else {
-            LOGGER.debug("Update rent {}, {}", rent, result);
+            LOGGER.debug("Update rent {}, {}", rentDto, result);
             if (result.hasErrors()) {
                 return "rent";
             } else {
-                rentService.update(rent);
+                rentService.createOrUpdate(rentDto);
                 return "redirect:/rents";
             }
         }

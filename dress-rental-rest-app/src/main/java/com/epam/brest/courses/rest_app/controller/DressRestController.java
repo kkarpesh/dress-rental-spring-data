@@ -1,6 +1,6 @@
 package com.epam.brest.courses.rest_app.controller;
 
-import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.rest_app.exception_handler.ErrorResponse;
 import com.epam.brest.courses.service_api.DressService;
 import org.slf4j.Logger;
@@ -38,6 +38,7 @@ public class DressRestController {
      */
     private final DressService dressService;
 
+
     /**
      * Constructs new object with given service layer object.
      *
@@ -54,9 +55,9 @@ public class DressRestController {
      * @return List with all found Dresses.
      */
     @GetMapping
-    public List<Dress> findAll() {
+    public List<DressDto> findAll() {
         LOGGER.debug("Find all dresses");
-        return dressService.findAll();
+        return dressService.findAllWithNumberOfOrders();
     }
 
     /**
@@ -66,9 +67,9 @@ public class DressRestController {
      * @return Dress.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Dress> findById(@PathVariable Integer id) {
+    public ResponseEntity<DressDto> findById(@PathVariable Integer id) {
         LOGGER.debug("Find dress by id = {}", id);
-        Optional<Dress> dress = dressService.findById(id);
+        Optional<DressDto> dress = dressService.findById(id);
         return dress.isPresent()
                 ? new ResponseEntity<>(dress.get(), HttpStatus.OK)
                 : new ResponseEntity(
@@ -80,27 +81,27 @@ public class DressRestController {
     /**
      * Creates new dress.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return created dress ID.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@RequestBody Dress dress) {
-        LOGGER.debug("Create new dress {}", dress);
-        return new ResponseEntity<>(dressService.create(dress), HttpStatus.OK);
+    public ResponseEntity<Integer> create(@RequestBody DressDto dressDto) {
+        LOGGER.debug("Create new dress {}", dressDto);
+        return new ResponseEntity<>(dressService.createOrUpdate(dressDto), HttpStatus.OK);
     }
 
     /**
      * Updates an existing dress with a new object.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return number of updated records in the database.
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> update(@RequestBody Dress dress) {
-        LOGGER.debug("Update dress {}", dress);
-        return new ResponseEntity<>(dressService.update(dress), HttpStatus.OK);
+    public ResponseEntity<Integer> update(@RequestBody DressDto dressDto) {
+        LOGGER.debug("Update dress {}", dressDto);
+        return new ResponseEntity<>(dressService.createOrUpdate(dressDto), HttpStatus.OK);
     }
 
     /**
@@ -118,14 +119,14 @@ public class DressRestController {
     /**
      * Checks if the name of the dress is already exist.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return the boolean value of the existence of a name.
      */
     @PostMapping(value = "/isExists")
     public ResponseEntity<Boolean> isNameAlreadyExists(
-            @RequestBody Dress dress) {
-        LOGGER.debug("is name exists - {}", dress);
-        return new ResponseEntity<>(dressService.isNameAlreadyExist(dress),
+            @RequestBody DressDto dressDto) {
+        LOGGER.debug("is name exists - {}", dressDto);
+        return new ResponseEntity<>(dressService.isNameAlreadyExist(dressDto),
                 HttpStatus.OK);
     }
 

@@ -1,9 +1,7 @@
 package com.epam.brest.courses.web_app.controller;
 
-import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
-import com.epam.brest.courses.service_api.dto.DressDtoService;
 import com.epam.brest.courses.web_app.validators.DressValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +34,6 @@ public class DressController {
     private final DressService dressService;
 
     /**
-     * Service layer object to get information of dressDto.
-     */
-    private final DressDtoService dressDtoService;
-
-    /**
      * Object to validate dress.
      */
     @Autowired
@@ -50,12 +43,9 @@ public class DressController {
      * Constructs new object.
      *
      * @param dressService    dressService object.
-     * @param dressDtoService dressDtoService object.
      */
-    public DressController(DressService dressService,
-                           DressDtoService dressDtoService) {
+    public DressController(DressService dressService) {
         this.dressService = dressService;
-        this.dressDtoService = dressDtoService;
     }
 
     /**
@@ -68,7 +58,7 @@ public class DressController {
     public final String getAll(Model model) {
         LOGGER.debug("Get all dresses");
         List<DressDto> dresses =
-                dressDtoService.findAllWithNumberOfOrders();
+                dressService.findAllWithNumberOfOrders();
         model.addAttribute("dresses", dresses);
         return "dresses";
     }
@@ -83,7 +73,7 @@ public class DressController {
     public final String gotoAddDressPage(Model model) {
         LOGGER.debug("Goto add dress page {}", model);
         model.addAttribute("isNew", true);
-        model.addAttribute("dress", new Dress());
+        model.addAttribute("dress", new DressDto());
         return "dress";
     }
 
@@ -97,7 +87,7 @@ public class DressController {
     @GetMapping("/{id}")
     public final String gotoEditDressPage(@PathVariable Integer id,
                                           Model model) {
-        Optional<Dress> dress = dressService.findById(id);
+        Optional<DressDto> dress = dressService.findById(id);
         if (dress.isPresent()) {
             model.addAttribute("dress", dress.get());
             return "dress";
@@ -109,31 +99,31 @@ public class DressController {
     /**
      * Update or create new dress.
      *
-     * @param dress  dress.
+     * @param dressDto  dressDto.
      * @param result binding result
      * @param model  to storage information for view rendering.
      * @return view name.
      */
     @PostMapping
-    public final String createOrUpdate(@Valid Dress dress,
+    public final String createOrUpdate(@Valid DressDto dressDto,
                                        BindingResult result,
                                        Model model) {
-        dressValidator.validate(dress, result);
-        if (dress.getDressId() == null) {
-            LOGGER.debug("Create new dress {}, {}", dress, result);
+        dressValidator.validate(dressDto, result);
+        if (dressDto.getDressId() == null) {
+            LOGGER.debug("Create new dress {}, {}", dressDto, result);
             if (result.hasErrors()) {
                 model.addAttribute("isNew", true);
                 return "dress";
             } else {
-                dressService.create(dress);
+                dressService.createOrUpdate(dressDto);
                 return "redirect:/dresses";
             }
         } else {
-            LOGGER.debug("Update dress {}, {}", dress, result);
+            LOGGER.debug("Update dress {}, {}", dressDto, result);
             if (result.hasErrors()) {
                 return "dress";
             } else {
-                dressService.update(dress);
+                dressService.createOrUpdate(dressDto);
                 return "redirect:/dresses";
             }
         }
@@ -151,7 +141,7 @@ public class DressController {
         if (dressService.isDressHasRents(id)) {
             model.addAttribute("removalProhibited", true);
             List<DressDto> dresses =
-                    dressDtoService.findAllWithNumberOfOrders();
+                    dressService.findAllWithNumberOfOrders();
             model.addAttribute("dresses", dresses);
             return "dresses";
         } else {

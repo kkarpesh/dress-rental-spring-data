@@ -1,8 +1,6 @@
 package com.epam.brest.courses.web_app.config;
 
-import com.epam.brest.courses.service_rest.DressDtoServiceRest;
 import com.epam.brest.courses.service_rest.DressServiceRest;
-import com.epam.brest.courses.service_rest.RentDtoServiceRest;
 import com.epam.brest.courses.service_rest.RentServiceRest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +27,6 @@ public class WebConfig {
     @Value("${point.rents}")
     private String pointRents;
 
-    @Value("${point.dress_dtos}")
-    private String pointDressDtos;
-
-    @Value("${point.rent_dtos}")
-    private String pointRentDtos;
-
     @Bean
     public DressServiceRest dressServiceRest() {
         String url = protocol + "://" + host + ":"
@@ -43,24 +35,10 @@ public class WebConfig {
     }
 
     @Bean
-    public DressDtoServiceRest dressDtoServiceRest() {
-        String url = protocol + "://" + host + ":"
-                + port + "/" + pointDressDtos + "/";
-        return new DressDtoServiceRest(url, restTemplate());
-    }
-
-    @Bean
     public RentServiceRest rentServiceRest() {
         String url = protocol + "://" + host + ":"
                 + port + "/" + pointRents + "/";
         return new RentServiceRest(url, restTemplate());
-    }
-
-    @Bean
-    public RentDtoServiceRest rentDtoServiceRest() {
-        String url = protocol + "://" + host + ":" + port
-                + "/" + pointRentDtos + "/";
-        return new RentDtoServiceRest(url, restTemplate());
     }
 
     @Bean

@@ -1,13 +1,18 @@
 package com.epam.brest.courses.service;
 
-import com.epam.brest.courses.dao.RentDao;
+import com.epam.brest.courses.dao.DressRepository;
+import com.epam.brest.courses.dao.RentRepository;
+import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,27 +37,46 @@ public class RentServiceImpl implements RentService {
     /**
      * A rent data access object.
      */
-    private final RentDao rentDao;
+    private final RentRepository rentRepository;
+
+    private final DressRepository dressRepository;
 
     /**
-     * Constructs new object with given DAO object.
+     * Constructs new object with given repository.
      *
-     * @param rentDao rent DAO.
+     * @param rentRepository rent repository.
      */
-    public RentServiceImpl(RentDao rentDao) {
-        this.rentDao = rentDao;
+    public RentServiceImpl(RentRepository rentRepository,
+                           DressRepository dressRepository) {
+        this.rentRepository = rentRepository;
+        this.dressRepository = dressRepository;
     }
 
     /**
-     * Finds all rents.
+     * Finds rents with dress name for a given period of time.
      *
-     * @return rents list.
+     * @param dateFrom period start date.
+     * @param dateTo   period finish date.
+     * @return rents with dress name for a given period of time.
      */
     @Override
-    @Transactional(readOnly = true)
-    public List<Rent> findAll() {
-        LOGGER.debug("Find all rents");
-        return rentDao.findAll();
+    public List<RentDto> findAllByDate(LocalDate dateFrom,
+                                       LocalDate dateTo) {
+        LOGGER.debug("Find all rents with dress name from {} to {}",
+                dateFrom,
+                dateTo);
+
+        List<Rent> rents = rentRepository.findByRentDateBetween(dateFrom, dateTo);
+        List<RentDto> rentDtos = new ArrayList<>();
+        for (Rent rent : rents) {
+            RentDto rentDto = new RentDto();
+            rentDto.setRentId(rent.getRentId());
+            rentDto.setClient(rent.getClient());
+            rentDto.setRentDate(rent.getRentDate());
+            rentDto.setDressName(rent.getDress().getDressName());
+            rentDtos.add(rentDto);
+        }
+        return rentDtos;
     }
 
     /**
@@ -63,33 +87,48 @@ public class RentServiceImpl implements RentService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Rent> findById(Integer rentId) {
+    public Optional<RentDto> findById(Integer rentId) {
         LOGGER.debug("Find rent by id {}", rentId);
-        return rentDao.findById(rentId);
+        Optional<Rent> rent = rentRepository.findById(rentId);
+        if (rent.isEmpty()) {
+            return Optional.empty();
+        } else {
+            RentDto rentDto = new RentDto();
+            rentDto.setRentId(rent.get().getRentId());
+            rentDto.setClient(rent.get().getClient());
+            rentDto.setRentDate(rent.get().getRentDate());
+            rentDto.setDressName(rent.get().getDress().getDressName());
+            return Optional.of(rentDto);
+        }
     }
 
     /**
      * Creates new rent.
      *
-     * @param rent dress.
+     * @param rentDto rentDto.
      * @return created rent Id.
      */
     @Override
-    public Integer create(Rent rent) {
-        LOGGER.debug("Create new rent {}", rent);
-        return rentDao.create(rent);
-    }
+    public Integer createOrUpdate(RentDto rentDto) {
+        LOGGER.debug("Create new rent {}", rentDto);
+        Optional<Dress> dress =
+                dressRepository.findByDressName(rentDto.getDressName());
+        if (dress.isEmpty()){
+            throw new IllegalArgumentException("Dress is not exist");
+        }
 
-    /**
-     * Updates rent.
-     *
-     * @param rent rent.
-     * @return number of updated records in the database.
-     */
-    @Override
-    public Integer update(Rent rent) {
-        LOGGER.debug("Update rent {}", rent);
-        return rentDao.update(rent);
+        boolean isRented = hasDressAlreadyBeenRentedForThisDate(rentDto);
+        if (isRented){
+            throw new IllegalArgumentException("Dress is already rented on this date");
+        } else {
+            Rent rent = new Rent();
+            rent.setRentId(rentDto.getRentId());
+            rent.setClient(rentDto.getClient());
+            rent.setRentDate(rentDto.getRentDate());
+            rent.setDress(dress.get());
+            Rent savedRent = rentRepository.save(rent);
+            return savedRent.getRentId();
+        }
     }
 
     /**
@@ -101,21 +140,35 @@ public class RentServiceImpl implements RentService {
     @Override
     public Integer delete(Integer rentId) {
         LOGGER.debug("Delete rent with id = {}", rentId);
-        return rentDao.delete(rentId);
+        Optional<Rent> rent = rentRepository.findById(rentId);
+        if (rent.isEmpty()) {
+            throw new IllegalArgumentException("Rent not exist");
+        } else {
+            rentRepository.deleteById(rentId);
+            return 1;
+        }
     }
 
     /**
      * Checks if dress rented for this date.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return true if dress has already been rented
      * for this date and false if not.
      */
     @Override
     @Transactional(readOnly = true)
-    public Boolean hasDressAlreadyBeenRentedForThisDate(Rent rent) {
-        LOGGER.debug("is rent exists - {}", rent);
-        return rentDao.hasDressAlreadyBeenRentedForThisDate(rent);
+    public Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto) {
+        LOGGER.debug("is rent exists - {}", rentDto);
+        Optional<Dress> dress =
+                dressRepository.findByDressName(rentDto.getDressName());
+        if (dress.isEmpty()) {
+            throw new IllegalArgumentException("Dress is not exist");
+        } else {
+            Optional<Rent> optionalRent =
+                    rentRepository.findByRentDateAndDress(rentDto.getRentDate(), dress.get());
+            return optionalRent.isPresent();
+        }
     }
 
 }

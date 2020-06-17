@@ -1,16 +1,18 @@
 package com.epam.brest.courses.rest_app.controller;
 
-import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.rest_app.exception_handler.ErrorResponse;
 import com.epam.brest.courses.service_api.RentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -49,14 +51,23 @@ public class RentRestController {
     }
 
     /**
-     * Finds all rents.
+     * Finds rents with dress name for a given period of time.
      *
-     * @return rents list.
+     * @param dateFrom period start date.
+     * @param dateTo   period finish date.
+     * @return rents with dress name for a given period of time.
      */
     @GetMapping
-    public List<Rent> findAll() {
-        LOGGER.debug("Find all rents");
-        return rentService.findAll();
+    public List<RentDto> findAllWIthDressNameByDate(
+            @RequestParam(value = "dateFrom", defaultValue = "2010-01-01")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(value = "dateTo", defaultValue = "2030-01-01")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+        LOGGER.debug("Find all rents with dress name from {} to {}",
+                dateFrom,
+                dateTo);
+
+        return rentService.findAllByDate(dateFrom, dateTo);
     }
 
     /**
@@ -66,9 +77,9 @@ public class RentRestController {
      * @return a Optional description of the rent found.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Rent> findById(@PathVariable Integer id) {
+    public ResponseEntity<RentDto> findById(@PathVariable Integer id) {
         LOGGER.debug("Find rent by id {}", id);
-        Optional<Rent> rent = rentService.findById(id);
+        Optional<RentDto> rent = rentService.findById(id);
         return rent.isPresent()
                 ? new ResponseEntity<>(rent.get(), HttpStatus.OK)
                 : new ResponseEntity(
@@ -80,27 +91,28 @@ public class RentRestController {
     /**
      * Creates new rent.
      *
-     * @param rent dress.
+     * @param rentDto RentDto.
      * @return created rent Id.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@RequestBody Rent rent) {
-        LOGGER.debug("Create new rent {}", rent);
-        return new ResponseEntity<>(rentService.create(rent), HttpStatus.OK);
+    public ResponseEntity<Integer> create(@RequestBody RentDto rentDto) {
+        LOGGER.debug("Create new rent {}", rentDto);
+
+        return new ResponseEntity<>(rentService.createOrUpdate(rentDto), HttpStatus.OK);
     }
 
     /**
      * Updates an existing rent with a new object.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return number of updated records in the database.
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> update(@RequestBody Rent rent) {
-        LOGGER.debug("Update rent {}", rent);
-        return new ResponseEntity<>(rentService.update(rent), HttpStatus.OK);
+    public ResponseEntity<Integer> update(@RequestBody RentDto rentDto) {
+        LOGGER.debug("Update rent {}", rentDto);
+        return new ResponseEntity<>(rentService.createOrUpdate(rentDto), HttpStatus.OK);
     }
 
     /**
@@ -118,15 +130,15 @@ public class RentRestController {
     /**
      * Checks if dress rented for this date.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return true if dress has already been rented.
      * for this date and false if not.
      */
-    @PostMapping(value = "isExists")
-    public ResponseEntity<Boolean> isDressRented(@RequestBody Rent rent) {
-        LOGGER.debug("is rent exists - {}", rent);
+    @PostMapping(value = "/isExists")
+    public ResponseEntity<Boolean> isDressRented(@RequestBody RentDto rentDto) {
+        LOGGER.debug("is rent exists - {}", rentDto);
         return new ResponseEntity<>(rentService
-                .hasDressAlreadyBeenRentedForThisDate(rent), HttpStatus.OK);
+                .hasDressAlreadyBeenRentedForThisDate(rentDto), HttpStatus.OK);
     }
 
 }

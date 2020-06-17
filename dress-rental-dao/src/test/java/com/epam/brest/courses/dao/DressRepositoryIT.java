@@ -2,7 +2,6 @@ package com.epam.brest.courses.dao;
 
 import com.epam.brest.courses.dao.config.DaoTestConfig;
 import com.epam.brest.courses.model.Dress;
-import com.epam.brest.courses.model.Rent;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.epam.brest.courses.constants.DressConstants.*;
-import static com.epam.brest.courses.constants.RentConstants.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DaoTestConfig.class)

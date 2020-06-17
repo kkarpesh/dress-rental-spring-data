@@ -1,6 +1,7 @@
 package com.epam.brest.courses.web_app.validators;
 
 import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,15 +49,15 @@ public class DressValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ValidationUtils.rejectIfEmpty(errors,
                 "dressName", "dressName.empty");
-        Dress dress = (Dress) target;
+        DressDto dressDto = (DressDto) target;
 
-        if (StringUtils.hasLength(dress.getDressName())
-                && dress.getDressName().length() > DRESS_NAME_SIZE) {
+        if (StringUtils.hasLength(dressDto.getDressName())
+                && dressDto.getDressName().length() > DRESS_NAME_SIZE) {
             errors.rejectValue("dressName",
                     "dressName.maxSize");
         }
 
-        if (dressService.isNameAlreadyExist(dress)) {
+        if (dressService.isNameAlreadyExist(dressDto)) {
             errors.rejectValue("dressName", "dressName.exist");
         }
     }

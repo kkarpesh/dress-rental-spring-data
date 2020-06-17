@@ -1,6 +1,7 @@
 package com.epam.brest.courses.service_rest;
 
 import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +51,13 @@ public class DressServiceRest implements DressService {
      * @return dresses list.
      */
     @Override
-    public List<Dress> findAll() {
+    public List<DressDto> findAllWithNumberOfOrders() {
         LOGGER.debug("Gets all dresses from REST");
         ResolvableType resolvableType =
-                ResolvableType.forClassWithGenerics(List.class, Dress.class);
-        ParameterizedTypeReference<List<Dress>> refType =
+                ResolvableType.forClassWithGenerics(List.class, DressDto.class);
+        ParameterizedTypeReference<List<DressDto>> refType =
                 ParameterizedTypeReference.forType(resolvableType.getType());
-        ResponseEntity<List<Dress>> responseEntity =
+        ResponseEntity<List<DressDto>> responseEntity =
                 restTemplate.exchange(url, HttpMethod.GET, null, refType);
         return responseEntity.getBody();
     }
@@ -68,24 +69,24 @@ public class DressServiceRest implements DressService {
      * @return a Optional description of the dress found.
      */
     @Override
-    public Optional<Dress> findById(Integer dressId) {
+    public Optional<DressDto> findById(Integer dressId) {
         LOGGER.debug("Find dress by ID {}", dressId);
-        ResponseEntity<Dress> responseEntity =
-                restTemplate.getForEntity(url + "/" + dressId, Dress.class);
+        ResponseEntity<DressDto> responseEntity =
+                restTemplate.getForEntity(url + "/" + dressId, DressDto.class);
         return Optional.ofNullable(responseEntity.getBody());
     }
 
     /**
      * Creates new dress.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return created dress ID.
      */
     @Override
-    public Integer create(Dress dress) {
-        LOGGER.debug("Create new dress {}", dress);
+    public Integer createOrUpdate(DressDto dressDto) {
+        LOGGER.debug("Create new dress {}", dressDto);
         ResponseEntity<Integer> responseEntity =
-                restTemplate.postForEntity(url, dress, Integer.class);
+                restTemplate.postForEntity(url, dressDto, Integer.class);
         return responseEntity.getBody();
     }
 
@@ -95,18 +96,18 @@ public class DressServiceRest implements DressService {
      * @param dress dress.
      * @return number of updated records in the database.
      */
-    @Override
-    public Integer update(Dress dress) {
-        LOGGER.debug("Update dress {}", dress);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Dress> dressHttpEntity = new HttpEntity<>(dress, headers);
-        ResponseEntity<Integer> responseEntity =
-                restTemplate.exchange(url, HttpMethod.PUT,
-                        dressHttpEntity, Integer.class);
-        return responseEntity.getBody();
-    }
+//    @Override
+//    public Integer update(Dress dress) {
+//        LOGGER.debug("Update dress {}", dress);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<Dress> dressHttpEntity = new HttpEntity<>(dress, headers);
+//        ResponseEntity<Integer> responseEntity =
+//                restTemplate.exchange(url, HttpMethod.PUT,
+//                        dressHttpEntity, Integer.class);
+//        return responseEntity.getBody();
+//    }
 
     /**
      * Deletes dress from data source.
@@ -130,14 +131,14 @@ public class DressServiceRest implements DressService {
     /**
      * Checks if the name of the dress is already exist.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return the boolean value of the existence of a name.
      */
     @Override
-    public Boolean isNameAlreadyExist(Dress dress) {
-        LOGGER.debug("is name exists - {}", dress);
+    public Boolean isNameAlreadyExist(DressDto dressDto) {
+        LOGGER.debug("is name exists - {}", dressDto);
         ResponseEntity<Boolean> responseEntity =
-                restTemplate.postForEntity(url + "/isExists", dress,
+                restTemplate.postForEntity(url + "/isExists", dressDto,
                         Boolean.class);
         return responseEntity.getBody();
     }

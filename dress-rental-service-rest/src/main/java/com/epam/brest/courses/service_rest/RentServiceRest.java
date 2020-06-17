@@ -1,6 +1,7 @@
 package com.epam.brest.courses.service_rest;
 
 import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,22 +47,39 @@ public class RentServiceRest implements RentService {
     }
 
     /**
-     * Gets all rents from source.
+     * Gets rents with dress name for a given period of time.
      *
-     * @return rents list.
+     * @param dateFrom period start date.
+     * @param dateTo   period finish date.
+     * @return rents with dress name for a given period of time.
      */
     @Override
-    public List<Rent> findAll() {
+    public List<RentDto> findAllByDate(LocalDate dateFrom,
+                                       LocalDate dateTo){
         LOGGER.debug("Gets all dresses from REST");
+
+        String fullUrl = url;
+
+        if (dateFrom != null && dateTo == null) {
+            fullUrl += "?dateFrom=" + dateFrom.toString();
+        }
+        if (dateFrom == null && dateTo != null) {
+            fullUrl += "?dateTo=" + dateTo.toString();
+        }
+        if (dateFrom != null && dateTo != null) {
+            fullUrl += "?dateFrom=" + dateFrom.toString()
+                    + "&dateTo=" + dateTo.toString();
+        }
+
         ResolvableType resolvableType =
-                ResolvableType.forClassWithGenerics(List.class, Rent.class);
-        ParameterizedTypeReference<List<Rent>> refType =
+                ResolvableType.forClassWithGenerics(List.class, RentDto.class);
+        ParameterizedTypeReference<List<RentDto>> refType =
                 ParameterizedTypeReference.forType(resolvableType.getType());
-        ResponseEntity<List<Rent>> responseEntity =
-                restTemplate.exchange(url, HttpMethod.GET,
+        ResponseEntity<List<RentDto>> responseEntity =
+                restTemplate.exchange(fullUrl, HttpMethod.GET,
                         null, refType);
         return responseEntity.getBody();
-    }
+}
 
     /**
      * Gets rent by given ID from source.
@@ -69,45 +88,45 @@ public class RentServiceRest implements RentService {
      * @return a Optional description of the rent found.
      */
     @Override
-    public Optional<Rent> findById(Integer rentId) {
+    public Optional<RentDto> findById(Integer rentId) {
         LOGGER.debug("Find dress by ID {}", rentId);
-        ResponseEntity<Rent> responseEntity =
-                restTemplate.getForEntity(url + "/" + rentId, Rent.class);
+        ResponseEntity<RentDto> responseEntity =
+                restTemplate.getForEntity(url + "/" + rentId, RentDto.class);
         return Optional.ofNullable(responseEntity.getBody());
     }
 
     /**
      * Creates new rent.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return created rent ID.
      */
     @Override
-    public Integer create(Rent rent) {
-        LOGGER.debug("Create new rent {}", rent);
+    public Integer createOrUpdate(RentDto rentDto) {
+        LOGGER.debug("Create new rent {}", rentDto);
         ResponseEntity<Integer> responseEntity =
-                restTemplate.postForEntity(url, rent, Integer.class);
+                restTemplate.postForEntity(url, rentDto, Integer.class);
         return responseEntity.getBody();
     }
 
-    /**
-     * Updates an existing rent with a new object.
-     *
-     * @param rent rent.
-     * @return number of updated records in the database.
-     */
-    @Override
-    public Integer update(Rent rent) {
-        LOGGER.debug("Update rent {}", rent);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Rent> rentHttpEntity = new HttpEntity<>(rent, headers);
-        ResponseEntity<Integer> responseEntity =
-                restTemplate.exchange(url, HttpMethod.PUT,
-                        rentHttpEntity, Integer.class);
-        return responseEntity.getBody();
-    }
+//    /**
+//     * Updates an existing rent with a new object.
+//     *
+//     * @param rent rent.
+//     * @return number of updated records in the database.
+//     */
+//    @Override
+//    public Integer update(Rent rent) {
+//        LOGGER.debug("Update rent {}", rent);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<Rent> rentHttpEntity = new HttpEntity<>(rent, headers);
+//        ResponseEntity<Integer> responseEntity =
+//                restTemplate.exchange(url, HttpMethod.PUT,
+//                        rentHttpEntity, Integer.class);
+//        return responseEntity.getBody();
+//    }
 
     /**
      * Deletes rent from data source.
@@ -131,16 +150,16 @@ public class RentServiceRest implements RentService {
     /**
      * Checks if dress rented for this date.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return true if dress has already been rented
      * for this date and false if not.
      */
     @Override
-    public Boolean hasDressAlreadyBeenRentedForThisDate(Rent rent) {
-        LOGGER.debug("is rent exists - {}", rent);
+    public Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto) {
+        LOGGER.debug("is rent exists - {}", rentDto);
         ResponseEntity<Boolean> responseEntity =
                 restTemplate.postForEntity(url + "/isExists",
-                        rent, Boolean.class);
+                        rentDto, Boolean.class);
         return responseEntity.getBody();
     }
 }

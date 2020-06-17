@@ -1,29 +1,15 @@
 package com.epam.brest.courses.dao.config;
 
-import com.epam.brest.courses.dao.DressDao;
-import com.epam.brest.courses.dao.RentDao;
-import com.epam.brest.courses.dao.RentRepository;
-import com.epam.brest.courses.dao.dto.DressDtoDao;
-import com.epam.brest.courses.dao.dto.DressDtoDaoJdbc;
-import com.epam.brest.courses.dao.dto.RentDtoDao;
-import com.epam.brest.courses.dao.dto.RentDtoDaoJdbc;
-import com.epam.brest.courses.test_db.config.TestDBConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;

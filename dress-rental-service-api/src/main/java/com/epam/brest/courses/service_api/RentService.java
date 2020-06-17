@@ -1,7 +1,8 @@
 package com.epam.brest.courses.service_api;
 
-import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.RentDto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +17,14 @@ import java.util.Optional;
 public interface RentService {
 
     /**
-     * Finds all rents.
+     * Finds rents with dress name for a given period of time.
      *
-     * @return rents list.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @return rents with dress name for a given period of time.
      */
-    List<Rent> findAll();
+    List<RentDto> findAllByDate(LocalDate dateFrom,
+                                LocalDate dateTo);
 
     /**
      * Finds rent by Id.
@@ -28,23 +32,23 @@ public interface RentService {
      * @param rentId rent Id.
      * @return dress.
      */
-    Optional<Rent> findById(Integer rentId);
+    Optional<RentDto> findById(Integer rentId);
 
     /**
      * Creates new rent.
      *
-     * @param rent dress.
+     * @param rentDto rentDto.
      * @return created rent Id.
      */
-    Integer create(Rent rent);
+    Integer createOrUpdate(RentDto rentDto);
 
-    /**
-     * Updates rent.
-     *
-     * @param rent rent.
-     * @return number of updated records in the database.
-     */
-    Integer update(Rent rent);
+//    /**
+//     * Updates rent.
+//     *
+//     * @param rent rent.
+//     * @return number of updated records in the database.
+//     */
+//    Integer update(Rent rent);
 
     /**
      * Deletes rent.
@@ -57,9 +61,9 @@ public interface RentService {
     /**
      * Checks if dress rented for this date.
      *
-     * @param rent rent.
+     * @param rentDto rentDto.
      * @return true if dress has already been rented
      * for this date and false if not.
      */
-    Boolean hasDressAlreadyBeenRentedForThisDate(Rent rent);
+    Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto);
 }

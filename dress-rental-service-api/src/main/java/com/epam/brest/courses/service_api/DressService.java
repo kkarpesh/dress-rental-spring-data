@@ -1,6 +1,6 @@
 package com.epam.brest.courses.service_api;
 
-import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.dto.DressDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +16,11 @@ import java.util.Optional;
 public interface DressService {
 
     /**
-     * Finds all dresses.
+     * Finds all dresses with number of orders.
      *
      * @return dresses list.
      */
-    List<Dress> findAll();
+    List<DressDto> findAllWithNumberOfOrders();
 
     /**
      * Finds dress by Id.
@@ -28,23 +28,15 @@ public interface DressService {
      * @param dressId dress Id.
      * @return dress.
      */
-    Optional<Dress> findById(Integer dressId);
+    Optional<DressDto> findById(Integer dressId);
 
     /**
-     * Creates new dress.
+     * Creates a new dress or updates an existing one.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return created dress Id.
      */
-    Integer create(Dress dress);
-
-    /**
-     * Updates dress.
-     *
-     * @param dress dress.
-     * @return number of updated records in the database.
-     */
-    Integer update(Dress dress);
+    Integer createOrUpdate(DressDto dressDto);
 
     /**
      * Deletes dress.
@@ -57,10 +49,10 @@ public interface DressService {
     /**
      * Checks if the name of the dress is already exist.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return the boolean value of the existence of a name.
      */
-    Boolean isNameAlreadyExist(Dress dress);
+    Boolean isNameAlreadyExist(DressDto dressDto);
 
     /**
      * Checks if the dress with a given ID has orders.

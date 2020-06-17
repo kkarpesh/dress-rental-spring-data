@@ -47,7 +47,7 @@ public class Rent {
     private Dress dress;
 
     /**
-     * Construcor without params.
+     * Constructor without params.
      */
     public Rent(){
     }

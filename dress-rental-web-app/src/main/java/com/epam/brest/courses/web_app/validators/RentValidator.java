@@ -1,6 +1,7 @@
 package com.epam.brest.courses.web_app.validators;
 
 import com.epam.brest.courses.model.Rent;
+import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,15 +50,15 @@ public class RentValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "client", "client.empty");
         ValidationUtils.rejectIfEmpty(errors, "rentDate", "rentDate.empty");
 
-        Rent rent = (Rent) target;
+        RentDto rentDto = (RentDto) target;
 
-        if (StringUtils.hasLength(rent.getClient())
-                && rent.getClient().length() > RENT_CLIENT_SIZE) {
+        if (StringUtils.hasLength(rentDto.getClient())
+                && rentDto.getClient().length() > RENT_CLIENT_SIZE) {
             errors.rejectValue("client", "client.maxSize");
         }
 
-        if (rentService.hasDressAlreadyBeenRentedForThisDate(rent)) {
-            errors.rejectValue("dressId", "dressId.exist");
+        if (rentService.hasDressAlreadyBeenRentedForThisDate(rentDto)) {
+            errors.rejectValue("dressName", "dressName.rented");
         }
     }
 }

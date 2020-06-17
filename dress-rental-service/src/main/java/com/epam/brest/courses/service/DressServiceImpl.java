@@ -2,6 +2,7 @@ package com.epam.brest.courses.service;
 
 import com.epam.brest.courses.dao.DressRepository;
 import com.epam.brest.courses.model.Dress;
+import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,9 +54,18 @@ public class DressServiceImpl implements DressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Dress> findAll() {
-        LOGGER.debug("Find all dresses");
-        return dressRepository.findAll();
+    public List<DressDto> findAllWithNumberOfOrders() {
+        LOGGER.debug("Find all dresses with number of orders");
+        List<Dress> dresses = dressRepository.findAll();
+        List<DressDto> dressDtos = new ArrayList<>();
+        for (Dress dress : dresses){
+            DressDto dressDto = new DressDto();
+            dressDto.setDressId(dress.getDressId());
+            dressDto.setDressName(dress.getDressName());
+            dressDto.setNumberOfOrders(dress.getRents().size());
+            dressDtos.add(dressDto);
+        }
+        return dressDtos;
     }
 
     /**
@@ -65,42 +76,43 @@ public class DressServiceImpl implements DressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Dress> findById(Integer dressId) {
+    public Optional<DressDto> findById(Integer dressId) {
         LOGGER.debug("Find dress with id = {}", dressId);
-        return dressRepository.findById(dressId);
+        Optional<Dress> dress = dressRepository.findById(dressId);
+        DressDto dressDto;
+        if (dress.isEmpty()){
+            return Optional.empty();
+        } else {
+            dressDto = new DressDto();
+            dressDto.setDressId(dress.get().getDressId());
+            dressDto.setDressName(dress.get().getDressName());
+            dressDto.setNumberOfOrders(dress.get().getRents().size());
+            return Optional.of(dressDto);
+        }
     }
 
     /**
      * Creates new dress.
      *
-     * @param dress dress.
+     * @param dressDto dress.
      * @return created dress Id.
      */
     @Override
-    public Integer create(Dress dress) {
-        LOGGER.debug("Create new dress {}", dress);
+    public Integer createOrUpdate(DressDto dressDto) {
+        LOGGER.debug("Create new dress {}", dressDto);
         Optional<Dress> optionalDress =
-                dressRepository.findByDressName(dress.getDressName());
+                dressRepository.findByDressName(dressDto.getDressName());
 
         if (optionalDress.isEmpty()) {
+            Dress dress = new Dress();
+            dress.setDressId(dressDto.getDressId());
+            dress.setDressName(dressDto.getDressName());
             Dress savedDress = dressRepository.save(dress);
             return savedDress.getDressId();
         } else {
             throw new IllegalArgumentException("Dress with the same name " +
                     "is already exist in DB");
         }
-    }
-
-    /**
-     * Updates dress.
-     *
-     * @param dress dress.
-     * @return number of updated records in the database.
-     */
-    @Override
-    public Integer update(Dress dress) {
-        LOGGER.debug("Update dress {}", dress);
-        return 0;
     }
 
     /**
@@ -128,14 +140,14 @@ public class DressServiceImpl implements DressService {
     /**
      * Checks if the name of the dress is already exist.
      *
-     * @param dress dress.
+     * @param dressDto dressDto.
      * @return the boolean value of the existence of a name.
      */
     @Override
     @Transactional(readOnly = true)
-    public Boolean isNameAlreadyExist(Dress dress) {
-        LOGGER.debug("is name exists - {}", dress);
-        Optional<Dress> foundDress = dressRepository.findByDressName(dress.getDressName());
+    public Boolean isNameAlreadyExist(DressDto dressDto) {
+        LOGGER.debug("is name exists - {}", dressDto);
+        Optional<Dress> foundDress = dressRepository.findByDressName(dressDto.getDressName());
         return foundDress.isPresent();
     }
 
