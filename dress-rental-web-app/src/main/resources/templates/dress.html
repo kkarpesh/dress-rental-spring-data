@@ -47,7 +47,7 @@
                                 th:text="${isNew} ? 'New dress' : 'Edit dress'">Edit dress</span>
                     </div>
 
-                    <form id="dressForm" action="dress.html" th:action="@{/dresses/}" th:object="${dress}"
+                    <form id="dressForm" action="dress.html" th:action="@{/dresses/}" th:object="${dressDto}"
                           th:method="@{post}">
                         <div class="card-body">
                             <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">

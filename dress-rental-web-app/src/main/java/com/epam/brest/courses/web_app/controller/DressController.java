@@ -73,7 +73,7 @@ public class DressController {
     public final String gotoAddDressPage(Model model) {
         LOGGER.debug("Goto add dress page {}", model);
         model.addAttribute("isNew", true);
-        model.addAttribute("dress", new DressDto());
+        model.addAttribute("dressDto", new DressDto());
         return "dress";
     }
 
@@ -87,9 +87,9 @@ public class DressController {
     @GetMapping("/{id}")
     public final String gotoEditDressPage(@PathVariable Integer id,
                                           Model model) {
-        Optional<DressDto> dress = dressService.findById(id);
-        if (dress.isPresent()) {
-            model.addAttribute("dress", dress.get());
+        Optional<DressDto> dressDto = dressService.findById(id);
+        if (dressDto.isPresent()) {
+            model.addAttribute("dressDto", dressDto.get());
             return "dress";
         } else {
             return "redirect:/dresses";

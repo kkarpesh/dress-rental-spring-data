@@ -34,7 +34,7 @@ public class RentValidator implements Validator {
      */
     @Override
     public boolean supports(Class<?> clazz) {
-        return Rent.class.isAssignableFrom(clazz);
+        return RentDto.class.isAssignableFrom(clazz);
     }
 
     /**

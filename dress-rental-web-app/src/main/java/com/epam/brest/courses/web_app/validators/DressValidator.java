@@ -34,7 +34,7 @@ public class DressValidator implements Validator {
      */
     @Override
     public boolean supports(Class<?> clazz) {
-        return Dress.class.isAssignableFrom(clazz);
+        return DressDto.class.isAssignableFrom(clazz);
     }
 
     /**

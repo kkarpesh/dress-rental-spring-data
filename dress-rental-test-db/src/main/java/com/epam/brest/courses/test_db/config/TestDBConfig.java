@@ -35,17 +35,20 @@ public class TestDBConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        HibernateJpaVendorAdapter vendorAdapter =
+                new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
 
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean factory =
+                new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.epam.brest.courses.*");
         factory.setDataSource(dataSource());
 
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "validate");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        properties.setProperty("hibernate.dialect",
+                "org.hibernate.dialect.H2Dialect");
 
         factory.setJpaProperties(properties);
 
@@ -53,7 +56,8 @@ public class TestDBConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager transactionManager(
+            EntityManagerFactory entityManagerFactory) {
 
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
