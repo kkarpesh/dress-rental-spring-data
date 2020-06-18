@@ -155,7 +155,7 @@ public class RentServiceRest implements RentService {
      * for this date and false if not.
      */
     @Override
-    public Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto) {
+    public Boolean isDressRented(RentDto rentDto) {
         LOGGER.debug("is rent exists - {}", rentDto);
         ResponseEntity<Boolean> responseEntity =
                 restTemplate.postForEntity(url + "/isExists",

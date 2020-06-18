@@ -57,7 +57,7 @@ public class RentValidator implements Validator {
             errors.rejectValue("client", "client.maxSize");
         }
 
-        if (rentService.hasDressAlreadyBeenRentedForThisDate(rentDto)) {
+        if (rentService.isDressRented(rentDto)) {
             errors.rejectValue("dressName", "dressName.rented");
         }
     }

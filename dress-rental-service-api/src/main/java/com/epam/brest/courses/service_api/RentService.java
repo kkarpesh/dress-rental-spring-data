@@ -65,5 +65,5 @@ public interface RentService {
      * @return true if dress has already been rented
      * for this date and false if not.
      */
-    Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto);
+    Boolean isDressRented(RentDto rentDto);
 }

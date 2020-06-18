@@ -8,6 +8,7 @@ import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class RentServiceImpl implements RentService {
      *
      * @param rentRepository rent repository.
      */
+    @Autowired
     public RentServiceImpl(RentRepository rentRepository,
                            DressRepository dressRepository) {
         this.rentRepository = rentRepository;
@@ -66,7 +68,8 @@ public class RentServiceImpl implements RentService {
                 dateFrom,
                 dateTo);
 
-        List<Rent> rents = rentRepository.findByRentDateBetween(dateFrom, dateTo);
+        List<Rent> rents =
+                rentRepository.findByRentDateBetween(dateFrom, dateTo);
         List<RentDto> rentDtos = new ArrayList<>();
         for (Rent rent : rents) {
             RentDto rentDto = new RentDto();
@@ -113,13 +116,14 @@ public class RentServiceImpl implements RentService {
         LOGGER.debug("Create new rent {}", rentDto);
         Optional<Dress> dress =
                 dressRepository.findByDressName(rentDto.getDressName());
-        if (dress.isEmpty()){
+        if (dress.isEmpty()) {
             throw new IllegalArgumentException("Dress is not exist");
         }
 
-        boolean isRented = hasDressAlreadyBeenRentedForThisDate(rentDto);
-        if (isRented){
-            throw new IllegalArgumentException("Dress is already rented on this date");
+        boolean isRented = isDressRented(rentDto);
+        if (isRented) {
+            throw new IllegalArgumentException("Dress is " +
+                    "already rented on this date");
         } else {
             Rent rent = new Rent();
             rent.setRentId(rentDto.getRentId());
@@ -158,16 +162,16 @@ public class RentServiceImpl implements RentService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Boolean hasDressAlreadyBeenRentedForThisDate(RentDto rentDto) {
+    public Boolean isDressRented(RentDto rentDto) {
         LOGGER.debug("is rent exists - {}", rentDto);
         Optional<Dress> dress =
                 dressRepository.findByDressName(rentDto.getDressName());
         if (dress.isEmpty()) {
             throw new IllegalArgumentException("Dress is not exist");
         } else {
-            Optional<Rent> optionalRent =
-                    rentRepository.findByRentDateAndDress(rentDto.getRentDate(), dress.get());
-            return optionalRent.isPresent();
+            Optional<Rent> rent = rentRepository
+                    .findByRentDateAndDress(rentDto.getRentDate(), dress.get());
+            return rent.isPresent();
         }
     }
 

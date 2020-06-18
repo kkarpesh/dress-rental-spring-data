@@ -138,7 +138,7 @@ public class RentRestController {
     public ResponseEntity<Boolean> isDressRented(@RequestBody RentDto rentDto) {
         LOGGER.debug("is rent exists - {}", rentDto);
         return new ResponseEntity<>(rentService
-                .hasDressAlreadyBeenRentedForThisDate(rentDto), HttpStatus.OK);
+                .isDressRented(rentDto), HttpStatus.OK);
     }
 
 }

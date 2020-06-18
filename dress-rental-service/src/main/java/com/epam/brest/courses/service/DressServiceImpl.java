@@ -147,7 +147,8 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public Boolean isNameAlreadyExist(DressDto dressDto) {
         LOGGER.debug("is name exists - {}", dressDto);
-        Optional<Dress> foundDress = dressRepository.findByDressName(dressDto.getDressName());
+        Optional<Dress> foundDress =
+                dressRepository.findByDressName(dressDto.getDressName());
         return foundDress.isPresent();
     }
 
