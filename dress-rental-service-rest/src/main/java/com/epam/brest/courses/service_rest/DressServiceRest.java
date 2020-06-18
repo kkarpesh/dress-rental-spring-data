@@ -91,25 +91,6 @@ public class DressServiceRest implements DressService {
     }
 
     /**
-     * Updates an existing dress with a new object.
-     *
-     * @param dress dress.
-     * @return number of updated records in the database.
-     */
-//    @Override
-//    public Integer update(Dress dress) {
-//        LOGGER.debug("Update dress {}", dress);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        HttpEntity<Dress> dressHttpEntity = new HttpEntity<>(dress, headers);
-//        ResponseEntity<Integer> responseEntity =
-//                restTemplate.exchange(url, HttpMethod.PUT,
-//                        dressHttpEntity, Integer.class);
-//        return responseEntity.getBody();
-//    }
-
-    /**
      * Deletes dress from data source.
      *
      * @param dressId dress.

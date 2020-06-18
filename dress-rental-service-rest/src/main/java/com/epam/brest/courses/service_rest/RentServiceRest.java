@@ -109,25 +109,6 @@ public class RentServiceRest implements RentService {
         return responseEntity.getBody();
     }
 
-//    /**
-//     * Updates an existing rent with a new object.
-//     *
-//     * @param rent rent.
-//     * @return number of updated records in the database.
-//     */
-//    @Override
-//    public Integer update(Rent rent) {
-//        LOGGER.debug("Update rent {}", rent);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        HttpEntity<Rent> rentHttpEntity = new HttpEntity<>(rent, headers);
-//        ResponseEntity<Integer> responseEntity =
-//                restTemplate.exchange(url, HttpMethod.PUT,
-//                        rentHttpEntity, Integer.class);
-//        return responseEntity.getBody();
-//    }
-
     /**
      * Deletes rent from data source.
      *
