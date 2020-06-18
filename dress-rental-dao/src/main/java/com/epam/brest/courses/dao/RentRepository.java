@@ -19,10 +19,27 @@ import java.util.Optional;
 @Repository
 public interface RentRepository extends JpaRepository<Rent, Integer> {
 
+    /**
+     * Counts rents by dress.
+     * @param dress dress.
+     * @return count of rents for dress.
+     */
     Integer countByDress(Dress dress);
 
+    /**
+     * Finds rents between dates.
+     * @param dateFrom date from.
+     * @param dateTo date to.
+     * @return list of rents.
+     */
     List<Rent> findByRentDateBetween(LocalDate dateFrom, LocalDate dateTo);
 
+    /**
+     * Finds rent with certain dress on date.
+     * @param rentDate rent date.
+     * @param dress dress.
+     * @return optional rent.
+     */
     Optional<Rent> findByRentDateAndDress(LocalDate rentDate, Dress dress);
 
 }

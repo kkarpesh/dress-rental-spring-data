@@ -88,7 +88,8 @@ public class DressRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> create(@RequestBody DressDto dressDto) {
         LOGGER.debug("Create new dress {}", dressDto);
-        return new ResponseEntity<>(dressService.createOrUpdate(dressDto), HttpStatus.OK);
+        return new ResponseEntity<>(dressService.createOrUpdate(dressDto),
+                HttpStatus.OK);
     }
 
     /**
@@ -101,7 +102,8 @@ public class DressRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> update(@RequestBody DressDto dressDto) {
         LOGGER.debug("Update dress {}", dressDto);
-        return new ResponseEntity<>(dressService.createOrUpdate(dressDto), HttpStatus.OK);
+        return new ResponseEntity<>(dressService.createOrUpdate(dressDto),
+                HttpStatus.OK);
     }
 
     /**

@@ -55,7 +55,7 @@ public class RentServiceRest implements RentService {
      */
     @Override
     public List<RentDto> findAllByDate(LocalDate dateFrom,
-                                       LocalDate dateTo){
+                                       LocalDate dateTo) {
         LOGGER.debug("Gets all dresses from REST");
 
         String fullUrl = url;
@@ -79,7 +79,7 @@ public class RentServiceRest implements RentService {
                 restTemplate.exchange(fullUrl, HttpMethod.GET,
                         null, refType);
         return responseEntity.getBody();
-}
+    }
 
     /**
      * Gets rent by given ID from source.

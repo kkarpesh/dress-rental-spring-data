@@ -1,6 +1,5 @@
 package com.epam.brest.courses.web_app.validators;
 
-import com.epam.brest.courses.model.Rent;
 import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
 import org.springframework.beans.factory.annotation.Autowired;

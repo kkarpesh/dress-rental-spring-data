@@ -9,9 +9,7 @@ Dress rental demo application.
 + [Run applications with java -jar command](#Run-applications-with-java--jar-command)
     + [Available REST endpoints](#Available-REST-endpoints)
         + [dresses](#dresses)
-        + [dress_dtos](#dress_dtos)
         + [rents](#rents)
-        + [rent_dtos](#rent_dtos)
 
 ## Environment setting
 ```
@@ -38,7 +36,7 @@ $ gradle alljavadoc
 ```
 and open:
 ```
-../dress-rental/build/docs/javadoc/index.html
+../dress-rental-spring-data/build/docs/javadoc/index.html
 ```
 ## Run application with Gradle
 Run command in project directory in different terminal windows:
@@ -115,12 +113,7 @@ curl -s -X GET 'http://localhost:8088/dresses/isExists?name=Jacquard%20shirt%20d
 ```
 curl -s -X GET 'http://localhost:8088/dresses/1/hasRents'
 ```
-### dress_dtos
 
-##### findAllWithNumberOfOrders
-```
-curl -s -X GET 'http://localhost:8088/dress_dtos' | json_pp
-```
 ### rents
 
 ##### findAll
@@ -138,7 +131,7 @@ curl -X POST 'http://localhost:8088/rents' \
 -H 'Content-Type: application/json' \
 --data-raw '{
         "client": "Marya Noganova",
-        "dressId": 1,
+        "dressName": "Jacquard shirt dress",
         "rentDate": "2020-05-30",
         "rentId": 0
 }'
@@ -150,7 +143,7 @@ curl -X PUT 'http://localhost:8088/rents' \
 -H 'Content-Type: application/json' \
 --data-raw '{
          "client": "Marya Minogarova",
-         "dressId": 5,
+         "dressName": "Jacquard shirt dress",
          "rentDate": "2020-05-30",
          "rentId": 2
 }'
@@ -165,13 +158,8 @@ curl -X POST 'http://localhost:8088/rents/isExists' \
 -H "Content-Type: application/json" \
 --data-raw '{
         "client": "",
-        "dressId": 5,
+        "dressName": "Jacquard shirt dress",
         "rentDate": "2020-05-30",
         "rentId": 0
 }'
-```
-### rent_dtos
-##### findAllWithDressNameByDate
-```
-curl -s -X GET 'http://localhost:8088/rent_dtos?dateFrom=2020-01-01&dateTo=2020-03-01' | json_pp
 ```

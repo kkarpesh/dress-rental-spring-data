@@ -37,7 +37,7 @@ public class Dress {
     /**
      * Constructor without params.
      */
-    public Dress(){
+    public Dress() {
     }
 
     /**
@@ -78,6 +78,7 @@ public class Dress {
 
     /**
      * Gets the rents.
+     *
      * @return the rents.
      */
     public Set<Rent> getRents() {
@@ -86,6 +87,7 @@ public class Dress {
 
     /**
      * Sets the rents.
+     *
      * @param rents a set of rents.
      */
     public void setRents(Set<Rent> rents) {

@@ -17,5 +17,10 @@ import java.util.*;
 @Repository
 public interface DressRepository extends JpaRepository<Dress, Integer> {
 
+    /**
+     * Finds dress by dress name.
+     * @param dressName dress name.
+     * @return optional of dress.
+     */
     Optional<Dress> findByDressName(String dressName);
 }

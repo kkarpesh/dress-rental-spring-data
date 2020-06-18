@@ -58,7 +58,7 @@ public class DressServiceImpl implements DressService {
         LOGGER.debug("Find all dresses with number of orders");
         List<Dress> dresses = dressRepository.findAll();
         List<DressDto> dressDtos = new ArrayList<>();
-        for (Dress dress : dresses){
+        for (Dress dress : dresses) {
             DressDto dressDto = new DressDto();
             dressDto.setDressId(dress.getDressId());
             dressDto.setDressName(dress.getDressName());
@@ -80,7 +80,7 @@ public class DressServiceImpl implements DressService {
         LOGGER.debug("Find dress with id = {}", dressId);
         Optional<Dress> dress = dressRepository.findById(dressId);
         DressDto dressDto;
-        if (dress.isEmpty()){
+        if (dress.isEmpty()) {
             return Optional.empty();
         } else {
             dressDto = new DressDto();
@@ -110,8 +110,8 @@ public class DressServiceImpl implements DressService {
             Dress savedDress = dressRepository.save(dress);
             return savedDress.getDressId();
         } else {
-            throw new IllegalArgumentException("Dress with the same name " +
-                    "is already exist in DB");
+            throw new IllegalArgumentException("Dress with the same name "
+                    + "is already exist in DB");
         }
     }
 
@@ -125,12 +125,12 @@ public class DressServiceImpl implements DressService {
     public Integer delete(Integer dressId) {
         LOGGER.debug("Delete dress by id = {}", dressId);
         Optional<Dress> dress = dressRepository.findById(dressId);
-        if (dress.isEmpty()){
-           throw new IllegalArgumentException("Dress not exist");
+        if (dress.isEmpty()) {
+            throw new IllegalArgumentException("Dress not exist");
         }
-        if (dress.get().getRents().size()>0){
-            throw new UnsupportedOperationException("This dress has orders" +
-                    " and cannot be removed.");
+        if (dress.get().getRents().size() > 0) {
+            throw new UnsupportedOperationException("This dress has orders"
+                    + " and cannot be removed.");
         } else {
             dressRepository.deleteById(dressId);
             return 1;
@@ -163,7 +163,7 @@ public class DressServiceImpl implements DressService {
     public Boolean isDressHasRents(Integer dressId) {
         LOGGER.debug("is dress id={} has rents", dressId);
         Optional<Dress> foundDress = dressRepository.findById(dressId);
-        if (foundDress.isEmpty()){
+        if (foundDress.isEmpty()) {
             throw new IllegalArgumentException("Dress is not exist.");
         } else {
             return foundDress.get().getRents().size() > 0;

@@ -49,7 +49,7 @@ public class Rent {
     /**
      * Constructor without params.
      */
-    public Rent(){
+    public Rent() {
     }
 
     /**
@@ -135,6 +135,6 @@ public class Rent {
                 + "rentId=" + rentId
                 + ", client='" + client + '\''
                 + ", rentDate=" + rentDate
-                + ", dress=" + dress+ '}';
+                + ", dress=" + dress + '}';
     }
 }

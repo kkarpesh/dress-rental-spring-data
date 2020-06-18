@@ -99,7 +99,8 @@ public class RentRestController {
     public ResponseEntity<Integer> create(@RequestBody RentDto rentDto) {
         LOGGER.debug("Create new rent {}", rentDto);
 
-        return new ResponseEntity<>(rentService.createOrUpdate(rentDto), HttpStatus.OK);
+        return new ResponseEntity<>(rentService.createOrUpdate(rentDto),
+                HttpStatus.OK);
     }
 
     /**
@@ -112,7 +113,8 @@ public class RentRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> update(@RequestBody RentDto rentDto) {
         LOGGER.debug("Update rent {}", rentDto);
-        return new ResponseEntity<>(rentService.createOrUpdate(rentDto), HttpStatus.OK);
+        return new ResponseEntity<>(rentService.createOrUpdate(rentDto),
+                HttpStatus.OK);
     }
 
     /**
@@ -121,7 +123,8 @@ public class RentRestController {
      * @param id rent Id.
      * @return number of deleted records in the database.
      */
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> delete(@PathVariable Integer id) {
         LOGGER.debug("Delete rent with id = {}", id);
         return new ResponseEntity<>(rentService.delete(id), HttpStatus.OK);
@@ -135,7 +138,8 @@ public class RentRestController {
      * for this date and false if not.
      */
     @PostMapping(value = "/isExists")
-    public ResponseEntity<Boolean> isDressRented(@RequestBody RentDto rentDto) {
+    public ResponseEntity<Boolean> isDressRented(
+            @RequestBody RentDto rentDto) {
         LOGGER.debug("is rent exists - {}", rentDto);
         return new ResponseEntity<>(rentService
                 .isDressRented(rentDto), HttpStatus.OK);

@@ -6,10 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Configuration
 @ComponentScan("com.epam.brest.courses.*")
 @EnableJpaRepositories(basePackages = "com.epam.brest.courses.*")

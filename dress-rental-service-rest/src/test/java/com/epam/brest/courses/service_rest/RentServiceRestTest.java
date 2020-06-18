@@ -31,7 +31,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = "classpath:app-context-test.xml")
+@ContextConfiguration(classes = ServiceRestTestConfig.class)
 class RentServiceRestTest {
 
     private static final String RENTS_URL = "http://localhost:8088/rents";

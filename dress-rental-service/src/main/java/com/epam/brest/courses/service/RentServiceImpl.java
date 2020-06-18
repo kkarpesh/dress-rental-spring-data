@@ -36,16 +36,20 @@ public class RentServiceImpl implements RentService {
             = LoggerFactory.getLogger(RentServiceImpl.class);
 
     /**
-     * A rent data access object.
+     * A rent repository.
      */
     private final RentRepository rentRepository;
 
+    /**
+     * A dress repository.
+     */
     private final DressRepository dressRepository;
 
     /**
      * Constructs new object with given repository.
      *
-     * @param rentRepository rent repository.
+     * @param rentRepository  rent repository.
+     * @param dressRepository dress repository.
      */
     @Autowired
     public RentServiceImpl(RentRepository rentRepository,
@@ -122,8 +126,8 @@ public class RentServiceImpl implements RentService {
 
         boolean isRented = isDressRented(rentDto);
         if (isRented) {
-            throw new IllegalArgumentException("Dress is " +
-                    "already rented on this date");
+            throw new IllegalArgumentException("Dress is "
+                    + "already rented on this date");
         } else {
             Rent rent = new Rent();
             rent.setRentId(rentDto.getRentId());
