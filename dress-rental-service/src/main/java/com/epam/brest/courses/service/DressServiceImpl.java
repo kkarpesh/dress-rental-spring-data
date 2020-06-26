@@ -3,6 +3,7 @@ package com.epam.brest.courses.service;
 import com.epam.brest.courses.dao.DressRepository;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.dto.DressDto;
+import com.epam.brest.courses.service.mappers.DressMapper;
 import com.epam.brest.courses.service_api.DressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class DressServiceImpl implements DressService {
      */
     private final DressRepository dressRepository;
 
+    private final DressMapper dressMapper;
+
     /**
      * Constructs new object with given DAO object.
      *
@@ -45,6 +48,7 @@ public class DressServiceImpl implements DressService {
     @Autowired
     public DressServiceImpl(DressRepository dressRepository) {
         this.dressRepository = dressRepository;
+        this.dressMapper = DressMapper.INSTANCE;
     }
 
     /**
@@ -59,10 +63,7 @@ public class DressServiceImpl implements DressService {
         List<Dress> dresses = dressRepository.findAll();
         List<DressDto> dressDtos = new ArrayList<>();
         for (Dress dress : dresses) {
-            DressDto dressDto = new DressDto();
-            dressDto.setDressId(dress.getDressId());
-            dressDto.setDressName(dress.getDressName());
-            dressDto.setNumberOfOrders(dress.getRents().size());
+            DressDto dressDto = dressMapper.dressToDressDto(dress);
             dressDtos.add(dressDto);
         }
         return dressDtos;
@@ -83,10 +84,7 @@ public class DressServiceImpl implements DressService {
         if (dress.isEmpty()) {
             return Optional.empty();
         } else {
-            dressDto = new DressDto();
-            dressDto.setDressId(dress.get().getDressId());
-            dressDto.setDressName(dress.get().getDressName());
-            dressDto.setNumberOfOrders(dress.get().getRents().size());
+            dressDto = dressMapper.dressToDressDto(dress.get());
             return Optional.of(dressDto);
         }
     }
@@ -104,9 +102,7 @@ public class DressServiceImpl implements DressService {
                 dressRepository.findByDressName(dressDto.getDressName());
 
         if (optionalDress.isEmpty()) {
-            Dress dress = new Dress();
-            dress.setDressId(dressDto.getDressId());
-            dress.setDressName(dressDto.getDressName());
+            Dress dress = dressMapper.dressDtoToDress(dressDto);
             Dress savedDress = dressRepository.save(dress);
             return savedDress.getDressId();
         } else {

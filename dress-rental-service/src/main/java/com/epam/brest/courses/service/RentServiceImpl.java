@@ -5,6 +5,7 @@ import com.epam.brest.courses.dao.RentRepository;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.Rent;
 import com.epam.brest.courses.model.dto.RentDto;
+import com.epam.brest.courses.service.mappers.RentMapper;
 import com.epam.brest.courses.service_api.RentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class RentServiceImpl implements RentService {
      */
     private final DressRepository dressRepository;
 
+    private final RentMapper rentMapper;
+
     /**
      * Constructs new object with given repository.
      *
@@ -56,6 +59,7 @@ public class RentServiceImpl implements RentService {
                            DressRepository dressRepository) {
         this.rentRepository = rentRepository;
         this.dressRepository = dressRepository;
+        this.rentMapper = RentMapper.INSTANCE;
     }
 
     /**
@@ -76,11 +80,7 @@ public class RentServiceImpl implements RentService {
                 rentRepository.findByRentDateBetween(dateFrom, dateTo);
         List<RentDto> rentDtos = new ArrayList<>();
         for (Rent rent : rents) {
-            RentDto rentDto = new RentDto();
-            rentDto.setRentId(rent.getRentId());
-            rentDto.setClient(rent.getClient());
-            rentDto.setRentDate(rent.getRentDate());
-            rentDto.setDressName(rent.getDress().getDressName());
+            RentDto rentDto = rentMapper.rentToRentDto(rent);
             rentDtos.add(rentDto);
         }
         return rentDtos;
@@ -100,11 +100,7 @@ public class RentServiceImpl implements RentService {
         if (rent.isEmpty()) {
             return Optional.empty();
         } else {
-            RentDto rentDto = new RentDto();
-            rentDto.setRentId(rent.get().getRentId());
-            rentDto.setClient(rent.get().getClient());
-            rentDto.setRentDate(rent.get().getRentDate());
-            rentDto.setDressName(rent.get().getDress().getDressName());
+            RentDto rentDto = rentMapper.rentToRentDto(rent.get());
             return Optional.of(rentDto);
         }
     }
@@ -129,10 +125,7 @@ public class RentServiceImpl implements RentService {
             throw new IllegalArgumentException("Dress is "
                     + "already rented on this date");
         } else {
-            Rent rent = new Rent();
-            rent.setRentId(rentDto.getRentId());
-            rent.setClient(rentDto.getClient());
-            rent.setRentDate(rentDto.getRentDate());
+            Rent rent = rentMapper.rentDtoToRent(rentDto);
             rent.setDress(dress.get());
             Rent savedRent = rentRepository.save(rent);
             return savedRent.getRentId();
