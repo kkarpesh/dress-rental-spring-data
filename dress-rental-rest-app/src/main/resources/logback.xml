@@ -20,10 +20,14 @@
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="org.springframework.aop.interceptor.PerformanceMonitorInterceptor" additivity="false">
-        <level value="TRACE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
+    <springProfile name="dev">
+        <logger name="org.springframework.aop.interceptor.PerformanceMonitorInterceptor"
+                additivity="false">
+            <level value="TRACE"/>
+            <appender-ref ref="STDOUT"/>
+        </logger>
+    </springProfile>
+
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
