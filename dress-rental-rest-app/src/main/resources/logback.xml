@@ -2,7 +2,8 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
@@ -10,12 +11,18 @@
         <file>log/logging.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
-    <logger name = "com.epam.brest.courses.dao" level="DEBUG">
+    <logger name="com.epam.brest.courses" level="DEBUG">
         <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.springframework.aop.interceptor.PerformanceMonitorInterceptor" additivity="false">
+        <level value="TRACE"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
 
     <root level="DEBUG">

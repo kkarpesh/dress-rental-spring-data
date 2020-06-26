@@ -14,7 +14,7 @@
         </encoder>
     </appender>
 
-    <logger name = "com.epam.brest.courses.dao" level="DEBUG">
+    <logger name = "com.epam.brest.courses" level="DEBUG">
         <appender-ref ref="FILE"/>
     </logger>
 
