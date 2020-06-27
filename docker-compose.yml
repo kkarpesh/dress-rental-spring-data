@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8888:8888
+    volumes:
+    - /home/carpeat/development/config:/config
     depends_on:
       - rest
 
