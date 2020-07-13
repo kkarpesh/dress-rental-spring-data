@@ -8,4 +8,6 @@ include(':dress-rental-service-api')
 include(':dress-rental-service-rest')
 include(':dress-rental-test-db')
 include(':dress-rental-web-app')
+include(':dress-rental-service-kafka-client')
+include 'dress-rental-web-kafka-client'
 
