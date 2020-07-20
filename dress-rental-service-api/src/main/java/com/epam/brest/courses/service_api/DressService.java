@@ -1,6 +1,7 @@
 package com.epam.brest.courses.service_api;
 
 import com.epam.brest.courses.model.dto.DressDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public interface DressService {
      * @param dressDto dressDto.
      * @return created dress Id.
      */
-    Integer createOrUpdate(DressDto dressDto);
+    Integer createOrUpdate(DressDto dressDto) throws JsonProcessingException;
 
     /**
      * Deletes dress.
@@ -44,7 +45,7 @@ public interface DressService {
      * @param dressId dress Id.
      * @return number of deleted records in the database.
      */
-    Integer delete(Integer dressId);
+    Integer delete(Integer dressId) throws JsonProcessingException;
 
     /**
      * Checks if the name of the dress is already exist.

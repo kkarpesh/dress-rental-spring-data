@@ -5,6 +5,7 @@ import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.DressService;
 import com.epam.brest.courses.service_api.RentService;
 import com.epam.brest.courses.web_app.validators.RentValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class RentController {
     @PostMapping
     public final String createOrUpdate(@Valid RentDto rentDto,
                                        BindingResult result,
-                                       Model model) {
+                                       Model model) throws JsonProcessingException {
         rentValidator.validate(rentDto, result);
         List<DressDto> dresses = dressService.findAllWithNumberOfOrders();
         model.addAttribute("dresses", dresses);
@@ -171,7 +172,7 @@ public class RentController {
      * @return view name.
      */
     @GetMapping("/delete/{id}")
-    public final String delete(@PathVariable Integer id) {
+    public final String delete(@PathVariable Integer id) throws JsonProcessingException {
         rentService.delete(id);
         return "redirect:/rents";
     }

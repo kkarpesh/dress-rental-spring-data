@@ -1,4 +1,4 @@
-package com.epam.brest.courses.web_kafka_client;
+package com.epam.brest.courses.web_app.config;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -23,6 +23,6 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic topic1(){
-        return new NewTopic("dr_web", 2, (short) 1);
+        return new NewTopic("dr", 2, (short) 1);
     }
 }

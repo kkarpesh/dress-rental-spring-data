@@ -3,15 +3,19 @@ package com.epam.brest.courses.web_app.controller;
 import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
 import com.epam.brest.courses.web_app.validators.DressValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +43,15 @@ public class DressController {
     @Autowired
     private DressValidator dressValidator;
 
+    private List<String> messages = new ArrayList<>();
+
+    @Autowired
+    private ObjectMapper mapper;
+
     /**
      * Constructs new object.
      *
-     * @param dressService    dressService object.
+     * @param dressService dressService object.
      */
     public DressController(DressService dressService) {
         this.dressService = dressService;
@@ -55,10 +64,15 @@ public class DressController {
      * @return view name.
      */
     @GetMapping
-    public final String getAll(Model model) {
+    public final String getAll(Model model) throws JsonProcessingException {
         LOGGER.debug("Get all dresses");
-        List<DressDto> dresses =
-                dressService.findAllWithNumberOfOrders();
+        List<DressDto> dresses;
+        if (messages.isEmpty()) {
+            dresses = dressService.findAllWithNumberOfOrders();
+        } else {
+            String message = messages.get(messages.size() - 1);
+            dresses = mapper.readValue(message, mapper.getTypeFactory().constructCollectionType(List.class, DressDto.class));
+        }
         model.addAttribute("dresses", dresses);
         return "dresses";
     }
@@ -99,15 +113,15 @@ public class DressController {
     /**
      * Update or create new dress.
      *
-     * @param dressDto  dressDto.
-     * @param result binding result
-     * @param model  to storage information for view rendering.
+     * @param dressDto dressDto.
+     * @param result   binding result
+     * @param model    to storage information for view rendering.
      * @return view name.
      */
     @PostMapping
     public final String createOrUpdate(@Valid DressDto dressDto,
                                        BindingResult result,
-                                       Model model) {
+                                       Model model) throws JsonProcessingException {
         dressValidator.validate(dressDto, result);
         if (dressDto.getDressId() == null) {
             LOGGER.debug("Create new dress {}, {}", dressDto, result);
@@ -137,7 +151,7 @@ public class DressController {
      * @return view name.
      */
     @GetMapping("/delete/{id}")
-    public final String delete(@PathVariable Integer id, Model model) {
+    public final String delete(@PathVariable Integer id, Model model) throws JsonProcessingException {
         if (dressService.isDressHasRents(id)) {
             model.addAttribute("removalProhibited", true);
             List<DressDto> dresses =
@@ -148,6 +162,13 @@ public class DressController {
             dressService.delete(id);
             return "redirect:/dresses";
         }
+    }
+
+    @KafkaListener(id = "dress", topics = {"dr"})
+    public void consume(String message) {
+        System.out.println("Received Messasge in group dress: " + message);
+        messages.add(message);
+
     }
 
 }

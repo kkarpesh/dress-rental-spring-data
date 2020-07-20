@@ -1,6 +1,7 @@
 package com.epam.brest.courses.service_api;
 
 import com.epam.brest.courses.model.dto.RentDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,7 +41,7 @@ public interface RentService {
      * @param rentDto rentDto.
      * @return created rent Id.
      */
-    Integer createOrUpdate(RentDto rentDto);
+    Integer createOrUpdate(RentDto rentDto) throws JsonProcessingException;
 
 //    /**
 //     * Updates rent.
@@ -56,7 +57,7 @@ public interface RentService {
      * @param rentId rent Id.
      * @return number of deleted records in the database.
      */
-    Integer delete(Integer rentId);
+    Integer delete(Integer rentId) throws JsonProcessingException;
 
     /**
      * Checks if dress rented for this date.

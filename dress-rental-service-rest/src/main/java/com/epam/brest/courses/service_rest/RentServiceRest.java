@@ -3,6 +3,7 @@ package com.epam.brest.courses.service_rest;
 import com.epam.brest.courses.model.Rent;
 import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.service_api.RentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,15 +36,18 @@ public class RentServiceRest implements RentService {
      */
     private RestTemplate restTemplate;
 
+    private DressServiceRest dressServiceRest;
+
     /**
      * Constructs new object with given url and Rest Template object.
      *
      * @param url          url.
      * @param restTemplate res template.
      */
-    public RentServiceRest(String url, RestTemplate restTemplate) {
+    public RentServiceRest(String url, RestTemplate restTemplate, DressServiceRest dressServiceRest) {
         this.url = url;
         this.restTemplate = restTemplate;
+        this.dressServiceRest = dressServiceRest;
     }
 
     /**
@@ -102,10 +106,13 @@ public class RentServiceRest implements RentService {
      * @return created rent ID.
      */
     @Override
-    public Integer createOrUpdate(RentDto rentDto) {
+    public Integer createOrUpdate(RentDto rentDto) throws JsonProcessingException {
         LOGGER.debug("Create new rent {}", rentDto);
         ResponseEntity<Integer> responseEntity =
                 restTemplate.postForEntity(url, rentDto, Integer.class);
+
+        dressServiceRest.sendDresses();
+
         return responseEntity.getBody();
     }
 
@@ -116,7 +123,7 @@ public class RentServiceRest implements RentService {
      * @return number of deleted records in the database.
      */
     @Override
-    public Integer delete(Integer rentId) {
+    public Integer delete(Integer rentId) throws JsonProcessingException {
         LOGGER.debug("Delete rent with id = {}", rentId);
 
         HttpHeaders headers = new HttpHeaders();
@@ -125,6 +132,9 @@ public class RentServiceRest implements RentService {
         ResponseEntity<Integer> responseEntity =
                 restTemplate.exchange(url + "/" + rentId,
                         HttpMethod.DELETE, rentHttpEntity, Integer.class);
+
+        dressServiceRest.sendDresses();
+
         return responseEntity.getBody();
     }
 

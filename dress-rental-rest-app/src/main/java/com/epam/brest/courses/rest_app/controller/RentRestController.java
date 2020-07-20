@@ -3,6 +3,7 @@ package com.epam.brest.courses.rest_app.controller;
 import com.epam.brest.courses.model.dto.RentDto;
 import com.epam.brest.courses.rest_app.exception_handler.ErrorResponse;
 import com.epam.brest.courses.service_api.RentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +97,7 @@ public class RentRestController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@RequestBody RentDto rentDto) {
+    public ResponseEntity<Integer> create(@RequestBody RentDto rentDto) throws JsonProcessingException {
         LOGGER.debug("Create new rent {}", rentDto);
 
         return new ResponseEntity<>(rentService.createOrUpdate(rentDto),
@@ -111,7 +112,7 @@ public class RentRestController {
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> update(@RequestBody RentDto rentDto) {
+    public ResponseEntity<Integer> update(@RequestBody RentDto rentDto) throws JsonProcessingException {
         LOGGER.debug("Update rent {}", rentDto);
         return new ResponseEntity<>(rentService.createOrUpdate(rentDto),
                 HttpStatus.OK);
@@ -125,7 +126,7 @@ public class RentRestController {
      */
     @DeleteMapping(value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> delete(@PathVariable Integer id) {
+    public ResponseEntity<Integer> delete(@PathVariable Integer id) throws JsonProcessingException {
         LOGGER.debug("Delete rent with id = {}", id);
         return new ResponseEntity<>(rentService.delete(id), HttpStatus.OK);
     }

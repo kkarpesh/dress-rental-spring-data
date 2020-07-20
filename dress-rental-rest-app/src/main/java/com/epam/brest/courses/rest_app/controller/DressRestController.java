@@ -3,6 +3,7 @@ package com.epam.brest.courses.rest_app.controller;
 import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.rest_app.exception_handler.ErrorResponse;
 import com.epam.brest.courses.service_api.DressService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +87,7 @@ public class DressRestController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@RequestBody DressDto dressDto) {
+    public ResponseEntity<Integer> create(@RequestBody DressDto dressDto) throws JsonProcessingException {
         LOGGER.debug("Create new dress {}", dressDto);
         return new ResponseEntity<>(dressService.createOrUpdate(dressDto),
                 HttpStatus.OK);
@@ -100,7 +101,7 @@ public class DressRestController {
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> update(@RequestBody DressDto dressDto) {
+    public ResponseEntity<Integer> update(@RequestBody DressDto dressDto) throws JsonProcessingException {
         LOGGER.debug("Update dress {}", dressDto);
         return new ResponseEntity<>(dressService.createOrUpdate(dressDto),
                 HttpStatus.OK);
@@ -113,7 +114,7 @@ public class DressRestController {
      * @return number of deleted records in the database.
      */
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> delete(@PathVariable Integer id) {
+    public ResponseEntity<Integer> delete(@PathVariable Integer id) throws JsonProcessingException {
         LOGGER.debug("Delete dress with id = {}", id);
         return new ResponseEntity<>(dressService.delete(id), HttpStatus.OK);
     }

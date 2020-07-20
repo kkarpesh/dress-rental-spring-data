@@ -3,11 +3,18 @@ package com.epam.brest.courses.service_rest;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.dto.DressDto;
 import com.epam.brest.courses.service_api.DressService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -34,15 +41,23 @@ public class DressServiceRest implements DressService {
      */
     private RestTemplate restTemplate;
 
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final NewTopic newTopic;
+
+    private ObjectMapper mapper = new ObjectMapper();
+
     /**
      * Constructs new object with given url and Rest Template object.
      *
      * @param url          url.
      * @param restTemplate res template.
      */
-    public DressServiceRest(String url, RestTemplate restTemplate) {
+    public DressServiceRest(String url, RestTemplate restTemplate, KafkaTemplate<String, String> kafkaTemplate, NewTopic newTopic) {
         this.url = url;
         this.restTemplate = restTemplate;
+        this.kafkaTemplate = kafkaTemplate;
+        this.newTopic = newTopic;
     }
 
     /**
@@ -83,10 +98,13 @@ public class DressServiceRest implements DressService {
      * @return created dress ID.
      */
     @Override
-    public Integer createOrUpdate(DressDto dressDto) {
+    public Integer createOrUpdate(DressDto dressDto) throws JsonProcessingException {
         LOGGER.debug("Create new dress {}", dressDto);
         ResponseEntity<Integer> responseEntity =
                 restTemplate.postForEntity(url, dressDto, Integer.class);
+
+        sendDresses();
+
         return responseEntity.getBody();
     }
 
@@ -97,7 +115,7 @@ public class DressServiceRest implements DressService {
      * @return number of deleted records in the database.
      */
     @Override
-    public Integer delete(Integer dressId) {
+    public Integer delete(Integer dressId) throws JsonProcessingException {
         LOGGER.debug("Delete dress with id = {}", dressId);
 
         HttpHeaders headers = new HttpHeaders();
@@ -106,6 +124,9 @@ public class DressServiceRest implements DressService {
         ResponseEntity<Integer> responseEntity =
                 restTemplate.exchange(url + "/" + dressId,
                         HttpMethod.DELETE, dressHttpEntity, Integer.class);
+
+        sendDresses();
+
         return responseEntity.getBody();
     }
 
@@ -137,5 +158,30 @@ public class DressServiceRest implements DressService {
                 restTemplate.getForEntity(url + "/" + dressId + "/hasRents",
                         Boolean.class);
         return responseEntity.getBody();
+    }
+
+    public void send(String message) {
+        LOGGER.debug("send", message);
+        ListenableFuture<SendResult<String, String>> future =
+                kafkaTemplate.send(newTopic.name(), message);
+
+        future.addCallback(new ListenableFutureCallback<>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                LOGGER.debug("Unable to send message=["
+                        + message + "] due to : " + ex.getMessage());
+            }
+
+            @Override
+            public void onSuccess(SendResult<String, String> result) {
+                LOGGER.debug("Sent message=[" + message +
+                        "] with offset=[" + result.getRecordMetadata().offset() + "]");
+            }
+        });
+    }
+
+    public void sendDresses() throws JsonProcessingException {
+        List<DressDto> dressDtos = findAllWithNumberOfOrders();
+        send(mapper.writeValueAsString(dressDtos));
     }
 }

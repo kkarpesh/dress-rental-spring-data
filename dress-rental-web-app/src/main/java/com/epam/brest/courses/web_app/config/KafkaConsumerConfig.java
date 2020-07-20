@@ -1,4 +1,4 @@
-package com.epam.brest.courses.service_kafka_client;
+package com.epam.brest.courses.web_app.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
