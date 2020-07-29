@@ -21,9 +21,12 @@ class RentRepositoryIT {
 
     private final RentRepository rentRepository;
 
+    private final DressRepository dressRepository;
+
     @Autowired
-    RentRepositoryIT(RentRepository rentRepository) {
+    RentRepositoryIT(RentRepository rentRepository, DressRepository dressRepository) {
         this.rentRepository = rentRepository;
+        this.dressRepository = dressRepository;
     }
 
     @Test
@@ -73,4 +76,25 @@ class RentRepositoryIT {
         assertTrue(rent.isPresent());
     }
 
+    @Test
+    void shouldFindByRentDateAndDressNotRentId() {
+        Dress dress = new Dress();
+        dress.setDressName("Dress");
+        Dress savedDress = dressRepository.save(dress);
+
+        Rent rent = new Rent();
+        rent.setClient("Client");
+        rent.setRentDate(LocalDate.now());
+        rent.setDress(savedDress);
+
+        Rent savedRent = rentRepository.save(rent);
+        System.out.println(savedRent);
+
+        Optional<Rent> optionalRent = rentRepository.findAnotherSameRent(
+                savedRent.getRentDate(),
+                savedRent.getDress().getDressName(),
+                savedRent.getRentId());
+
+        assertTrue(optionalRent.isEmpty());
+    }
 }

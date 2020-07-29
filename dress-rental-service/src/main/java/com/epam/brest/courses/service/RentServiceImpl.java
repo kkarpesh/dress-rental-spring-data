@@ -163,11 +163,19 @@ public class RentServiceImpl implements RentService {
         LOGGER.debug("is rent exists - {}", rentDto);
         Optional<Dress> dress =
                 dressRepository.findByDressName(rentDto.getDressName());
+
+        Optional<Rent> rent;
         if (dress.isEmpty()) {
             throw new IllegalArgumentException("Dress is not exist");
         } else {
-            Optional<Rent> rent = rentRepository
-                    .findByRentDateAndDress(rentDto.getRentDate(), dress.get());
+            if (rentDto.getRentId() != null) {
+                rent = rentRepository.findAnotherSameRent(
+                        rentDto.getRentDate(),
+                        rentDto.getDressName(),
+                        rentDto.getRentId());
+            } else {
+                rent = rentRepository.findByRentDateAndDress(rentDto.getRentDate(), dress.get());
+            }
             return rent.isPresent();
         }
     }

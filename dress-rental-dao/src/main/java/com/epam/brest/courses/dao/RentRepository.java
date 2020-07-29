@@ -3,6 +3,7 @@ package com.epam.brest.courses.dao;
 import com.epam.brest.courses.model.Dress;
 import com.epam.brest.courses.model.Rent;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -41,5 +42,8 @@ public interface RentRepository extends JpaRepository<Rent, Integer> {
      * @return optional rent.
      */
     Optional<Rent> findByRentDateAndDress(LocalDate rentDate, Dress dress);
+
+    @Query("select r from #{#entityName} r where r.rentDate = ?1 and r.dress.dressName = ?2 and r.rentId <> ?3")
+    Optional<Rent> findAnotherSameRent(LocalDate date, String dressName, Integer rentId);
 
 }

@@ -101,7 +101,6 @@ class RentServiceImplMockTest {
         when(rentRepository.save(any())).thenReturn(rent);
 
         RentDto rentDto = new RentDto();
-        rentDto.setRentId(rent.getRentId());
         rentDto.setClient(rent.getClient());
         rentDto.setRentDate(rent.getRentDate());
         rentDto.setDressName(rent.getDress().getDressName());
@@ -118,7 +117,6 @@ class RentServiceImplMockTest {
     @Test
     void shouldThrowExceptionWhenCreateNewRentIfDressWasRentedOnThisDay() {
         Rent rent = new Rent();
-        rent.setRentId(1);
         rent.setClient("Client");
         rent.setRentDate(LocalDate.now());
 
@@ -188,7 +186,6 @@ class RentServiceImplMockTest {
     @Test
     void checkIsDressRentedReturnTrue() {
         RentDto rentDto = new RentDto();
-        rentDto.setRentId(1);
         rentDto.setDressName("Dress");
 
         when(dressRepository.findByDressName(rentDto.getDressName())).thenReturn(Optional.of(new Dress()));
@@ -201,9 +198,25 @@ class RentServiceImplMockTest {
     }
 
     @Test
-    void checkIsDressRentedReturnFalse() {
+    void checkIsDressRentedReturnFalseForCurrentRent() {
         RentDto rentDto = new RentDto();
         rentDto.setRentId(1);
+        rentDto.setDressName("Dress");
+        rentDto.setRentDate(LocalDate.now());
+        rentDto.setDressName("Dress");
+
+        when(dressRepository.findByDressName(rentDto.getDressName())).thenReturn(Optional.of(new Dress()));
+        when(rentRepository.findAnotherSameRent(rentDto.getRentDate(), rentDto.getDressName(), rentDto.getRentId())).thenReturn(Optional.empty());
+
+        assertFalse(rentService.isDressRented(rentDto));
+
+        verify(dressRepository, times(1)).findByDressName(rentDto.getDressName());
+        verify(rentRepository, times(1)).findAnotherSameRent(rentDto.getRentDate(), rentDto.getDressName(), rentDto.getRentId());
+    }
+
+    @Test
+    void checkIsDressRentedReturnFalse() {
+        RentDto rentDto = new RentDto();
         rentDto.setDressName("Dress");
 
         when(dressRepository.findByDressName(rentDto.getDressName())).thenReturn(Optional.of(new Dress()));
