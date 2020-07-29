@@ -34,4 +34,17 @@ class DressRepositoryIT {
         assertEquals(savedDress.getDressId(), foundDress.get().getDressId());
         assertEquals(savedDress.getDressName(), foundDress.get().getDressName());
     }
+
+    @Test
+    void shouldFindByDressNameWhereDressIdNot(){
+        Dress dress = new Dress();
+        String dressName = RandomStringUtils.randomAlphabetic(DRESS_NAME_SIZE);
+        dress.setDressName(dressName);
+
+        Dress savedDress = dressRepository.save(dress);
+
+        Optional<Dress> foundDress = dressRepository.findByDressNameWhereDressIdNot(savedDress.getDressName(), savedDress.getDressId());
+        assertTrue(foundDress.isEmpty());
+    }
+
 }

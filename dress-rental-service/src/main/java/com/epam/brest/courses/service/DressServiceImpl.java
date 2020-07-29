@@ -98,16 +98,17 @@ public class DressServiceImpl implements DressService {
     @Override
     public Integer createOrUpdate(DressDto dressDto) {
         LOGGER.debug("Create new dress {}", dressDto);
-        Optional<Dress> optionalDress =
-                dressRepository.findByDressName(dressDto.getDressName());
 
-        if (optionalDress.isEmpty()) {
+        boolean isNameExist = isNameAlreadyExist(dressDto);
+
+        if (isNameExist) {
+            throw new IllegalArgumentException("Dress with the same name "
+                    + "is already exist in DB");
+
+        } else {
             Dress dress = dressMapper.dressDtoToDress(dressDto);
             Dress savedDress = dressRepository.save(dress);
             return savedDress.getDressId();
-        } else {
-            throw new IllegalArgumentException("Dress with the same name "
-                    + "is already exist in DB");
         }
     }
 
@@ -143,9 +144,16 @@ public class DressServiceImpl implements DressService {
     @Transactional(readOnly = true)
     public Boolean isNameAlreadyExist(DressDto dressDto) {
         LOGGER.debug("is name exists - {}", dressDto);
-        Optional<Dress> foundDress =
-                dressRepository.findByDressName(dressDto.getDressName());
-        return foundDress.isPresent();
+
+        Optional<Dress> optionalDress;
+        if (dressDto.getDressId() != null) {
+            optionalDress =
+                    dressRepository.findByDressNameWhereDressIdNot(dressDto.getDressName(), dressDto.getDressId());
+        } else {
+            optionalDress = dressRepository.findByDressName(dressDto.getDressName());
+        }
+
+        return optionalDress.isPresent();
     }
 
     /**

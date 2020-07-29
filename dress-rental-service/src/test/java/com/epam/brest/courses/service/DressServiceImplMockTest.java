@@ -75,17 +75,18 @@ class DressServiceImplMockTest {
     void shouldCreateNewDress() {
         Dress dress = new Dress();
         dress.setDressName("Dress");
-        dress.setDressId(1);
+        Dress savedDress = new Dress();
+        savedDress.setDressId(1);
+        savedDress.setDressName(dress.getDressName());
         when((dressRepository.findByDressName("Dress"))).thenReturn(Optional.empty());
-        when(dressRepository.save(any())).thenReturn(dress);
+        when(dressRepository.save(any())).thenReturn(savedDress);
 
         DressDto dressDto = new DressDto();
-        dressDto.setDressId(dress.getDressId());
         dressDto.setDressName(dress.getDressName());
-        Integer dressId = dressService.createOrUpdate(dressDto);
+        Integer id = dressService.createOrUpdate(dressDto);
 
-        assertNotNull(dressId);
-        assertEquals(dressId, 1);
+        assertNotNull(id);
+        assertEquals(savedDress.getDressId(), id);
 
         verify(dressRepository, times(1)).save(any());
     }
@@ -150,11 +151,9 @@ class DressServiceImplMockTest {
     @Test
     void isNameAlreadyExistReturnTrue() {
         Dress dress = new Dress();
-        dress.setDressId(1);
         dress.setDressName("Dress");
 
         DressDto dressDto = new DressDto();
-        dressDto.setDressId(dress.getDressId());
         dressDto.setDressName(dress.getDressName());
         when(dressRepository.findByDressName("Dress")).thenReturn(Optional.of(dress));
 
@@ -164,9 +163,21 @@ class DressServiceImplMockTest {
     }
 
     @Test
-    void isNameAlreadyExistReturnFalse() {
+    void isNameAlreadyExistReturnFalseForCurrentDress() {
+
         DressDto dressDto = new DressDto();
         dressDto.setDressId(1);
+        dressDto.setDressName("Dress");
+        when(dressRepository.findByDressNameWhereDressIdNot(dressDto.getDressName(), dressDto.getDressId())).thenReturn(Optional.empty());
+
+        assertFalse(dressService.isNameAlreadyExist(dressDto));
+
+        verify(dressRepository, times(1)).findByDressNameWhereDressIdNot(dressDto.getDressName(), dressDto.getDressId());
+    }
+
+    @Test
+    void isNameAlreadyExistReturnFalse() {
+        DressDto dressDto = new DressDto();
         dressDto.setDressName("Dress");
         when(dressRepository.findByDressName("Dress")).thenReturn(Optional.empty());
 
